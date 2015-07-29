@@ -30,6 +30,21 @@ var LOG_ENABLE = (true);
 
 var log = ((LOG_ENABLE)?function(log){console.log(log)}:function(){});
 
+window.scripts = [
+'js/options.js',
+'js/player.js',
+'js/particles.js',
+'js/loading.js',
+'js/ui/statusico.js',
+'js/ui/characterselect.js',
+'js/ui/gameover.js',
+'js/intro.js',
+'js/game.js'
+ ];
+ 
+ 
+ 
+
 var SpiceJS = Object.create({
 
 	//Initalize window components for referencing SpiceJS
@@ -48,7 +63,10 @@ var SpiceJS = Object.create({
 		//if appsNextId isnt larger or equal to 0 assign it to 0
 		if (!this.window.appsNextId>=0)
 			this.window	.appsNextId = 0;
-
+	
+		//Include Javascript
+		!function(e,t,r){function n(){for(;d[0]&&"loaded"==d[0][f];)c=d.shift(),c[o]=!i.parentNode.insertBefore(c,i)}for(var s,a,c,d=[],i=e.scripts[0],o="onreadystatechange",f="readyState";s=r.shift();)a=e.createElement(t),""in i?(a.async=!1,e.head.appendChild(a)):i[f]?(d.push(a),a[o]=n):e.write("<"+t+' src="'+s+'" defer></'+t+">"),a.src=s}(document,"script",window.scripts);
+		
 		return this;
 	},
 
@@ -88,7 +106,7 @@ var SpiceJS = Object.create({
 					enumerable:true,
 
 					//VN
-					value:'0.6.70.15.08.01.min'
+					value:'0.6.71.15.08.01.min'
 				},
 
 				//Build Client, Instantiate Loop, Build Canvas, Initalize Client
@@ -365,7 +383,7 @@ var SpiceJS = Object.create({
 					
 					flags:{						//Feature Flags
 						canvas:true,
-						mstouch:false,
+						mstouch:true,
 						seamless:false,
 						tight:true,
 						touchprevent:true,
@@ -1434,7 +1452,6 @@ return;
                                 },
 								//Update the position for smooth scrolling
 								update:function(x,y){
-									
 									var left = (this.window.pageXOffset || this.doc.scrollLeft) - (this.doc.clientLeft || 0);
 									var top = (this.window.pageYOffset || this.doc.scrollTop)  - (this.doc.clientTop || 0);
 
@@ -1515,8 +1532,9 @@ return;
 								var input = evt.target.app.input;
 
 								//Save Latest X/Y or 0
-								input.x = input.start.x = evt.x || evt.clientX || 0;
-								input.y = input.start.y = evt.y || evt.clientY || 0;
+								
+								input.x = input.start.x = evt.x || evt.clientX || evt.pageX;
+								input.y = input.start.y = evt.y || evt.clientY || evt.pageY;
 
 								//Increment Touch Count
 								input.touched.count++;
@@ -1536,19 +1554,36 @@ return;
 							},
 
 							//input move fill
+							
+							mouse_last:0,
 							move:function(evt){
 
 								//Grab parent
 								var input = evt.target.app.input;
 
-								evt = evt || {clientX:null,clientY:null};
+								evt = evt || input || {clientX:null,clientY:null};
 
+								var mouse_last = this.mouse_last; 
 								//sET PRESS
 								input.press = true;
-								input.x = evt.clientX || evt.x;
-								input.y = evt.clientY || evt.y;
-								input.dist.x = (input.x-input.start.x)*evt.target.app.getDelta();
-								input.dist.y = (input.y-input.start.y)*evt.target.app.getDelta();
+								input.x = evt.clientX || evt.x || evt.pageX;
+								input.y = evt.clientY || evt.y || evt.pageY;
+								input.dist.x = (input.x-input.start.x)*evt.target.app.getScale();
+								input.dist.y = (input.y-input.start.y)*evt.target.app.getScale();
+								
+								
+	//		console.log(this.mouse_last-input.dist.x);
+								
+								if (input.dist.x>0)
+									if (this.mouse_last>input.dist.x)
+										input.start.x = input.x, input.dist.x = 0;
+								
+								if (input.dist.x<0)
+									if (this.mouse_last<input.dist.x)
+										input.start.x = input.x, input.dist.x = 0;
+								
+								this.mouse_last =  input.dist.x;
+								
 							},
 
 							up:function(evt) {
@@ -1568,8 +1603,8 @@ return;
 								input.pressed = false;
 								input.released = true;
 								input.touch = false;
-								input.dist.x = (input.x-input.start.x)*input.app.client.delta;
-								input.dist.y = (input.y-input.start.y)*input.app.client.delta;
+								input.dist.x = (input.x-input.start.x)*evt.target.app.getScale();
+								input.dist.y = (input.y-input.start.y)*evt.target.app.getScale();
 							},
 
 							key_down:function(evt){
@@ -1584,17 +1619,24 @@ return;
 								evt.input.kpressed = false;
 							},
 
-							touch:function(touch){
-
-								var input = evt.target.app.input;
-
+							touch:function(evt){
+							//	var input = touch.target.app.input;
+								
+								
+								//console.log(input,touch);
+								try {
+								var input = evt.target.app.input || evt;
+								} catch (e){
+									var input = evt; console.log(evt);								
+								};
 								input.touch = true;
-								input.x = touch.pageX;
-								input.y = touch.pageY;
-								input.pos.x = touch.pageX;
-								input.pos.y = touch.pageY;
-								input.start.x = touch.pageX;
-								input.start.y = touch.pageY;
+								
+								input.x = evt.clientX || evt.x || evt.pageX;
+								input.y = evt.clientY || evt.y || evt.pageY;
+								
+								input.pos = {x:0,y:0};
+								input.pos.x = evt.pageX||evt.clientX;
+								input.pos.y = evt.pageY||evt.clientY;
 								input.released = false;
 								input.duration = 0;
 
@@ -1620,14 +1662,15 @@ return;
 						touch_distance:function(touch) {
 							if (!touch)
 								return;
-							App.input.x = touch.pageX;
-							App.input.y = touch.pageY;
+							App.input.x = touch.pageX||touch.clientX;
+							App.input.y = touch.pageY||touch.clientX;
 							//if (!App.input.input.pressed)
 								App.input.dist =  App.client.Math.Vector.Difference(App.input.start,App.input.end);
 						},
 
 						update:function UPDATE() {
 
+							//		console.log(this.x);
 							//Reset last positions
 							this.last.x = this.x;
 							this.last.y = this.y;
@@ -2119,6 +2162,7 @@ return;
 								//Build
 								(this.update.state = Object.create(this.update.state.prototype,this.update.state.constructor(this))).init(this.main);
 
+								
 								}
 							}
 
@@ -2801,28 +2845,48 @@ return;
 							Sprite:{},
 							sprite:{},
 							img:{},
+							
 							load:function(name,file){
+								
 								if (typeof file==="undefined")
 									file =  this.app.options.get("paths").images+""+name;
+								
 								this.Sources.append(this.SpriteAppend(name,file));
+								
 								return this.Sources.getByName(name);
+								
 							},
+							
 							SpriteCreate:function(file,src,name){
+								
 								this.SpriteLoadNumber++;
+								
 								this.SpriteLoadTime += (10*this.app.delta_speed)*this.SpriteLoadNumber;
+								
 								return this.sprite = Object.create(this.Sprite,{file:{value:file},src:{value:src},name:{value:name}});
+								
 							},
+							
 							SpriteAppend:function(name,file){
+								
 								return (this.img = this.SpriteCreate(file,this.path + file + ".png",name)).get();
+								
 							},
+							
 							SpriteUnload:function(name,file){
+								
 								delete this.Sources.getByName(name);
 								//return this.SpriteLoad(name,file);
+								
 							},
+							
 							webLoad:function(name,address){
+								
 								this.SpriteWebItems[name] = new Image();
+								
 								this.SpriteWebItems[name].src = address;
 								return this.SpriteWebItems[name];
+								
 							},
 							graphicsLibrary:function(){
 								this.Sprite = Object.create(null);
@@ -3295,9 +3359,9 @@ return;
 								this.font(this.stat.h+"em "+style);
 								this.stat.h = this.point*this.stat.h;
 
-								this.buffer_context.fillText(string,this.stat.x-this.stat.w/2-this.stat.s,this.stat.y-this.stat.h/2);
+								this.buffer_context.fillText(string,this.stat.x-Math.floor(this.stat.w/2)-this.stat.s,this.stat.y-Math.floor(this.stat.h/2));
 
-								//(this.stat.c)?this.buffer_context.fillText(string,this.stat.x-this.stat.w/2-this.stat.s,this.stat.y-this.stat.h/2):this.buffer_context.fillText(string,this.stat.x,this.stat.y+this.stat.h/2);
+								//(this.stat.c)?this.buffer_context.fillText(string,this.stat.x-Math.floor(this.stat.w/2)-this.stat.s,this.stat.y-Math.floor(this.stat.h/2)):this.buffer_context.fillText(string,this.stat.x,this.stat.y+Math.floor(this.stat.h/2));
 								this.font(f);
 								this.clean();
 							},
@@ -3314,12 +3378,12 @@ return;
 									//if (App.input.released)
 									//	if (App.input.delay<1)
 									//		loc(),App.input.delay = 1;
-									(this.stat.c)?this.buffer_context.fillText(string,this.stat.x-this.stat.w/2-this.stat.s,this.stat.y-this.stat.h/2):this.buffer_context.fillText(string,this.stat.x,this.stat.y+this.stat.h/2);
+									(this.stat.c)?this.buffer_context.fillText(string,this.stat.x-Math.floor(this.stat.w/2)-this.stat.s,this.stat.y-Math.floor(this.stat.h/2)):this.buffer_context.fillText(string,this.stat.x,this.stat.y+Math.floor(this.stat.h/2));
 								}
 								else
 								{
 									this.opacity(this.stat.a*0.75);
-									(this.stat.c)?this.buffer_context.fillText(string,this.stat.x-this.stat.w/2-this.stat.s,this.stat.y-this.stat.h/2):this.buffer_context.fillText(string,this.stat.x,this.stat.y+this.stat.h/2);
+									(this.stat.c)?this.buffer_context.fillText(string,this.stat.x-Math.floor(this.stat.w/2)-this.stat.s,this.stat.y-Math.floor(this.stat.h/2)):this.buffer_context.fillText(string,this.stat.x,this.stat.y+Math.floor(this.stat.h/2));
 								}
 								this.font(f);
 								this.clean();
@@ -3339,7 +3403,7 @@ return;
 								{
 								this.colour("#00A0F1");
 								this.buffer_context.beginPath();
-								this.stat.c?this.buffer_context.rect(this.stat.x-this.stat.w/2, this.stat.y-this.stat.h/2, this.stat.w, this.stat.h):this.buffer_context.rect(this.stat.x-this.stat.w*0.2, this.stat.y-this.stat.h*0.2, this.stat.w*1.1, this.stat.h*1.1);
+								this.stat.c?this.buffer_context.rect(this.stat.x-Math.floor(this.stat.w/2), this.stat.y-Math.floor(this.stat.h/2), this.stat.w, this.stat.h):this.buffer_context.rect(this.stat.x-this.stat.w*0.2, this.stat.y-this.stat.h*0.2, this.stat.w*1.1, this.stat.h*1.1);
 								this.buffer_context.fill();
 
 								this.colour("#DDDDDD");
@@ -3354,12 +3418,12 @@ return;
 									}
 
 
-									(this.stat.c)?this.buffer_context.fillText(string,this.stat.x-this.stat.w/2-this.stat.s,this.stat.y-this.stat.h/2):this.buffer_context.fillText(string,this.stat.x,this.stat.y+this.stat.h/2);
+									(this.stat.c)?this.buffer_context.fillText(string,this.stat.x-Math.floor(this.stat.w/2)-this.stat.s,this.stat.y-Math.floor(this.stat.h/2)):this.buffer_context.fillText(string,this.stat.x,this.stat.y+Math.floor(this.stat.h/2));
 								}
 								else
 								{
 									this.opacity(this.stat.a*0.75);
-									(this.stat.c)?this.buffer_context.fillText(string,this.stat.x-this.stat.w/2-this.stat.s,this.stat.y-this.stat.h/2):this.buffer_context.fillText(string,this.stat.x,this.stat.y+this.stat.h/2);
+									(this.stat.c)?this.buffer_context.fillText(string,this.stat.x-Math.floor(this.stat.w/2)-this.stat.s,this.stat.y-Math.floor(this.stat.h/2)):this.buffer_context.fillText(string,this.stat.x,this.stat.y+Math.floor(this.stat.h/2));
 								}
 								this.font(f);
 								this.clean();
@@ -3388,7 +3452,7 @@ return;
 							rect_ext:function(x,y,w,h,s,a,c,colour){
 								this.stat = this.chk(x,y,w,h,s,a,c,colour);
 								this.buffer_context.beginPath();
-								this.stat.c?this.buffer_context.rect(this.stat.x-this.stat.w/2, this.stat.y-this.stat.h/2, this.stat.w, this.stat.h):this.buffer_context.rect(this.stat.x, this.stat.y, this.stat.w, this.stat.h);
+								this.stat.c?this.buffer_context.rect(this.stat.x-Math.floor(this.stat.w/2), this.stat.y-Math.floor(this.stat.h/2), this.stat.w, this.stat.h):this.buffer_context.rect(this.stat.x, this.stat.y, this.stat.w, this.stat.h);
 								this.buffer_context.fill();
 
 								this.clean();
@@ -3396,7 +3460,7 @@ return;
 							rect_stroke:function(x,y,w,h,s,a,c,colour,l){
 								this.stat = this.chk(x,y,w,h,s,a,c,colour);
 								this.buffer_context.beginPath();
-								this.stat.c?this.buffer_context.rect(this.stat.x-this.stat.w/2, this.stat.y-this.stat.h/2, this.stat.w, this.stat.h):this.buffer_context.rect(this.stat.x, this.stat.y, this.stat.w, this.stat.h);
+								this.stat.c?this.buffer_context.rect(this.stat.x-Math.floor(this.stat.w/2), this.stat.y-Math.floor(this.stat.h/2), this.stat.w, this.stat.h):this.buffer_context.rect(this.stat.x, this.stat.y, this.stat.w, this.stat.h);
 								this.buffer_context.fillStyle = 'transparent';
 								this.buffer_context.fill();
 								this.buffer_context.lineWidth = l || 1;
@@ -3428,22 +3492,27 @@ return;
 								this.stat = this.chk(x,y,w,h,s,a,1,colour);
 								this.buffer_context.translate(this.stat.x,this.stat.y);
 								this.buffer_context.rotate(angle*0.0174532925);
-								this.stat.c?this.buffer_context.rect(0-this.stat.w/2,0-this.stat.h/2, this.stat.w, this.stat.h):this.buffer_context.rect(0, 0, this.stat.w, this.stat.h);
+								this.stat.c?this.buffer_context.rect(0-Math.floor(this.stat.w/2),0-Math.floor(this.stat.h/2), this.stat.w, this.stat.h):this.buffer_context.rect(0, 0, this.stat.w, this.stat.h);
 								this.buffer_context.rotate(-angle*0.0174532925);
 								this.buffer_context.translate(-this.stat.x,-this.stat.y);
 								this.clean();
 							},
 							rect_gradient:function(x,y,w,h,s,a,c,colour,colour2,angle){
 								this.stat = this.chk(x,y,w,h,s,a,c,colour);
-								return;
-								//log(x,y,w,h,s,a,c,c,colour,colour2,angle);
-								//log(this.stat.x,this.stat.y,this.stat.w,this.stat.h,this.stat.s,this.stat.a,this.stat.c,this.stat.colour);
 								this.buffer_context.translate(this.stat.x,this.stat.y);
 								this.buffer_context.rotate(angle*0.0174532925);
-
-								this.stat.c?this.grd = this.buffer_context.createLinearGradient(this.stat.w/2,0, this.stat.w/2, this.stat.h/2):this.grd = this.buffer_context.createLinearGradient(0,0, this.stat.w, this.stat.h);
+								
+								if (!this.stat.w)
+									return
+								if (!this.stat.h)
+									return
+								if (!this.stat.x)
+									return
+								if (!this.stat.y)
+									return
+								this.stat.c?this.grd = this.buffer_context.createLinearGradient(Math.floor(this.stat.w/2),0, Math.floor(this.stat.w/2), Math.floor(this.stat.h/2)):this.grd = this.buffer_context.createLinearGradient(0,0, this.stat.w, this.stat.h);
 								this.buffer_context.beginPath();
-								this.stat.c?this.buffer_context.rect(0-this.stat.w/2,0-this.stat.h/2, this.stat.w, this.stat.h):this.buffer_context.rect(0, 0, this.stat.w, this.stat.h);
+								this.stat.c?this.buffer_context.rect(0-Math.floor(this.stat.w/2),0-Math.floor(this.stat.h/2), this.stat.w, this.stat.h):this.buffer_context.rect(0, 0, this.stat.w, this.stat.h);
 								this.grd.addColorStop(0, colour);
 								this.grd.addColorStop(1, colour2);
 								this.buffer_context.fillStyle = this.grd;
@@ -3484,7 +3553,7 @@ return;
 								document.body.appendChild(this.elm);
 								this.elm.src = image.src;
 								return this.elm;
-								//(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-this.stat.w/2,this.stat.y-this.stat.h/2,this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
+								//(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-Math.floor(this.stat.w/2),this.stat.y-Math.floor(this.stat.h/2),this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
 							},
 							image_replacecol:function(image,x,y,s,a,c,colour){
 								
@@ -3531,22 +3600,25 @@ return;
 								image.src = c.toDataURL('image/png');
 								
 								
-								(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-this.stat.w/2,this.stat.y-this.stat.h/2,this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
+								(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-Math.floor(this.stat.w/2),this.stat.y-Math.floor(this.stat.h/2),this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
 							},
 							image_ext:function(image,x,y,s,a,c){
 								this.stat = this.chk(x,y,image.width,image.height,s,a,c);
-								(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-this.stat.w/2,this.stat.y-this.stat.h/2,this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
+								(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-Math.floor(this.stat.w/2),this.stat.y-Math.floor(this.stat.h/2),this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
 							},
 							image_ext2:function(image,x,y,sx,sy,a,c){
 								this.stat = this.chk(x,y,image.width,image.height,sx,a,c);
 								this.stat2 = this.chk(x,y,image.width,image.height,sy,a,c);
-								(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-this.stat.w/2,this.stat.y-this.stat.h/2,this.stat.w*this.stat.s,this.stat.h*this.stat2.s):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w*this.stat.s,this.stat.h*this.stat2.s);
+								(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-Math.floor(this.stat.w/2),this.stat.y-Math.floor(this.stat.h/2),this.stat.w*this.stat.s,this.stat.h*this.stat2.s):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w*this.stat.s,this.stat.h*this.stat2.s);
 							},
-							image_centered:function(image,x,y){
-								this.image_ext(image,x,y,1,1,true);
+							image_centered:function(image,x,y,a){
+								this.image_ext(image,x,y,1,a,true);
 							},
 							image:function(image,x,y){
 								this.image_ext(image,x,y,1,1,false);
+							},
+							image_scaled:function(image,x,y,s){
+								this.image_ext(image,x,y,s,1,false);
 							},
 							image_stat:function(image,x,y,s,a,c,xx,yy,w,h){
 								this.stat = this.chk(x,y,w,h,s,a,c);
@@ -3569,7 +3641,7 @@ return;
 
 
 
-								(this.stat.c)?this.buffer_context.drawImage(image,xx,yy,w,h,this.stat.x-this.stat.w/2,this.stat.y-this.stat.h/2,this.stat.w,this.stat.h):this.buffer_context.drawImage(image,xx,yy,w,h,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
+								(this.stat.c)?this.buffer_context.drawImage(image,xx,yy,w,h,this.stat.x-Math.floor(this.stat.w/2),this.stat.y-Math.floor(this.stat.h/2),this.stat.w,this.stat.h):this.buffer_context.drawImage(image,xx,yy,w,h,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
 
 
 							},
@@ -3579,7 +3651,7 @@ return;
 								var scale = (1.1*this.stat.s)*this.app.getScale();
 								this.buffer_context.translate(this.stat.x,this.stat.y);
 								this.buffer_context.rotate(angle*0.0174532925);
-								(this.stat.c)?this.buffer_context.drawImage(image,xx,yy,w,h,0-this.stat.w/2,0-this.stat.h/2,this.stat.w,this.stat.h):this.buffer_context.drawImage(image,xx,yy,w,h,0,0,this.stat.w,this.stat.h);
+								(this.stat.c)?this.buffer_context.drawImage(image,xx,yy,w,h,0-Math.floor(this.stat.w/2),0-Math.floor(this.stat.h/2),this.stat.w,this.stat.h):this.buffer_context.drawImage(image,xx,yy,w,h,0,0,this.stat.w,this.stat.h);
 								this.buffer_context.rotate(-angle*0.0174532925);
 								this.buffer_context.translate(-this.stat.x,-this.stat.y);
 							},
@@ -3587,11 +3659,92 @@ return;
 								this.stat = this.chk(x,y,image.width,image.height,s,a,true);
 								this.buffer_context.translate(this.stat.x,this.stat.y);
 								this.buffer_context.rotate(angle*0.0174532925);
-								(this.stat.c)?this.buffer_context.drawImage(image,0-this.stat.w/2,0-this.stat.h/2,this.stat.w,this.stat.h):this.buffer_context.drawImage(image,0,0,this.stat.w,this.stat.h);
+								(this.stat.c)?this.buffer_context.drawImage(image,0-Math.floor(this.stat.w/2),0-Math.floor(this.stat.h/2),this.stat.w,this.stat.h):this.buffer_context.drawImage(image,0,0,this.stat.w,this.stat.h);
 								this.buffer_context.rotate(-angle*0.0174532925);
 								this.buffer_context.translate(-this.stat.x,-this.stat.y);
 							},
 
+							texture:function(texture,xx,yy,w,h,yoff,xoff,xonly,xo,yo,s){
+								
+								var yoff = yoff||0;
+								var yo = yo||0;
+								var xo = xo||0;
+								var y = 0;
+								var img = texture;
+								var width =w;
+								var height = h;
+
+								var s = s;
+								
+								
+								xo*=s;
+								yo*=s;
+								
+								
+								var bh = img.height;
+								var img_width = img.width;
+								var img_height = img.height;
+
+								var img_width_scaled = +img_width*s;
+								var img_height_scaled =+img_height*s;
+								
+								var offy = yy;
+								var offx = xx;
+
+								var by = Math.round((offy/s+height+(-yoff/s-height))%img_height_scaled-img_height_scaled);
+								var by_first = by;
+
+
+
+								var bx =  -width*s/2+(offx/s+(width*s))%img_width_scaled-img_width_scaled;
+								
+								var span_width = (width+img_width)*s+img_width_scaled;
+								var span_height = (height+bh)*s+img_height_scaled;
+								
+								
+								
+								if (xonly)
+									span_width = 0;
+								
+								
+								if (xonly)
+								{
+									var x = (bx-(width*s)/2)-s*bx/img_width;
+
+									for (by = by_first; by < span_height; by += img_height_scaled)
+									{
+										var y = (-by+height*s)+s*by/bh;
+
+									
+								if (!xonly)
+										this.image_ext(img,xo+x,yo+y,s,1,true);
+								if (xonly)
+										this.image_scaled(img,xo+x,yo+y,s,1,true);
+
+									
+									}
+								}
+								else
+								for (bx; bx < span_width; bx += img_width_scaled)
+								{
+									var x = (bx-(width*s)/2)-1*bx/img_width;
+
+									for (by = by_first; by < span_height; by += img_height_scaled)
+									{
+										var y = (-by+height*s)+1*by/bh;
+
+								if (!xonly)
+										this.image_ext(img,xo+x,yo+y,s,1,true);
+								if (xonly)
+										this.image_scaled(img,xo+x,yo+y,s,1,true);
+
+									}
+								}
+
+							},
+							
+							
+							
 							setBleed:function(threshold){
 								this.bleed = threshold;
 							},
@@ -3654,13 +3807,13 @@ return;
 											loc();
 										this.app.input.delay = 1;
 									}
-									(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-this.stat.w/2,this.stat.y-this.stat.h/2,this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
+									(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-Math.floor(this.stat.w/2),this.stat.y-Math.floor(this.stat.h/2),this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
 								}
 								else
 								{
 									if (this.highlight)
 									this.opacity(this.stat.a*0.75);
-									(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-this.stat.w/2,this.stat.y-this.stat.h/2,this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
+									(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-Math.floor(this.stat.w/2),this.stat.y-Math.floor(this.stat.h/2),this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
 								}
 								return w;
 							},
@@ -3676,13 +3829,13 @@ return;
 									this.app.ext.cursor.set(this.app.ext.cursor.pointer,true);
 									if (this.app.input.pressed)
 											loc(),this.app.input.delay = 1;
-									(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-this.stat.w/2,this.stat.y-this.stat.h/2,this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
+									(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-Math.floor(this.stat.w/2),this.stat.y-Math.floor(this.stat.h/2),this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
 								}
 								else
 								{
 									if (this.highlight)
 									this.opacity(this.stat.a*0.75);
-									(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-this.stat.w/2,this.stat.y-this.stat.h/2,this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
+									(this.stat.c)?this.buffer_context.drawImage(image,this.stat.x-Math.floor(this.stat.w/2),this.stat.y-Math.floor(this.stat.h/2),this.stat.w,this.stat.h):this.buffer_context.drawImage(image,this.stat.x,this.stat.y,this.stat.w,this.stat.h);
 								}
 								return w;
 							},

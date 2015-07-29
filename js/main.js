@@ -4,45 +4,68 @@ var Application = SpiceJS.create();
 //Application OnLoad
 Application.OnLoad = function (self) {
 
+	self.options.set({paths:SB_PATHS});
+	
 	self.Init("Example SpiceJS", 320, 720);
 
-	self.canvas.setBackground("#000000");
-
-	//self.options.set({paths:{images:""}});
+	self.canvas.setBackground("#FFFFFF");
 
 	self.ext.metatag.metaFavicon("favicon.png");
 
 };
 
-//Application main loop Object[init,update,draw]
 Application.main= {
 
 	name:"Example",
 
 	init:function() {
 
-		//Initialization Logic
-		this.img = this.graphics.load("../favicon");
-
-		this.loading = this.app.create(Loading).init();
+		this.state = 1;
 		
-		return true;
+	//	this.app.client.visuals.setBleed(0.9);
+		
+		this.states = {menu:0,game:1};
+		
+		(this.intro = this.app.create(Intro.prototype)).init();
+		
+		(this.game = this.app.create(Game.prototype)).init();
+		
 	},
 
 	update:function() {
 
-		this.loading.update();
+		switch(this.state)
+		{
+			case 0:
+				
+				this.intro.update();
+			
+			break;
+			case 1:
+				
+				this.game.update();
+			
+			break;
+		}
 		
-		return true;
 	},
 
 	draw:function() {
-
-		this.loading.draw();
-		//this.visuals.rotate_at(25,-this.img.width/2,-this.img.height/2);
-		//this.visuals.image(this.img,0,0);
-		//this.visuals.setBleed(1);
-		return true;
+		
+		switch(this.state)
+		{
+			case 0:
+				
+				this.intro.draw();
+			
+			break;
+			case 1:
+				
+				this.game.draw();
+			
+			break;
+		}
+		
 	}
 
 };

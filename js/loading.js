@@ -1,12 +1,18 @@
 "use strict";
-var Loading = {
+var Loading = Object.create(null);
+Loading.prototype = {
+	
 	init:function(){
 	
 		this.x = 0;
+		
 		this.colours = ["#336633","#663333"];
+		
 		this.color = this.colours[0];
+		
 		return this;
 	},
+	
 	draw:function(){
 	
 		var a = 15;
@@ -21,9 +27,11 @@ var Loading = {
 	update:function(){
 	
 		var delta = this.app.getDelta();
+		
 		this.color = this.colours[this.app.client.Math.Clamp(Math.round((delta>1.6?1:0)+this.graphics.getErrors()),0,1)];
+		
 		this.x+=3*delta;
 		
 	}
 	
-}
+};
