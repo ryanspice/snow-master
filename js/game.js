@@ -556,14 +556,14 @@ Game.prototype = {
 	//	this.map.x = MapOffX*2.9;
 	//	this.map.x = MapOffX+(width/2*this.app.getCurrent().game.mapscale);
 		
-		this.visuals.texture(this.main_snow,this.map.x,this.map.y, width, height,this.pl,0,0,0,0,m);
+		this.visuals.texture(this.main_snow,this.player.x,this.map.y, width, height,this.pl,0,0,0,0,m);
 		
 		//this.visuals.texture(this.main_mountianl,MapOffX*0.9,-MapOffY, 0, height,this.pl,0,true,this.mountian_pos,97,m);
 		//this.visuals.texture(this.main_mountian,MapOffX*0.9,-MapOffY, 0, height,this.pl,0,true,this.mountian_pos2,97,m);
 		
 		
-		this.visuals.texture(this.main_mountianl,this.map.x,this.map.y, 0, height,this.pl,0,true,(this.mountian_pos),0,m);
-		this.visuals.texture(this.main_mountian,this.map.x,this.map.y, 0, height,this.pl,0,true,(this.mountian_pos2),0,m);
+		this.visuals.texture(this.main_mountianl,this.player.x,this.map.y, 0, height,this.pl,0,true,(this.mountian_pos),0,m);
+		this.visuals.texture(this.main_mountian,this.player.x,this.map.y, 0, height,this.pl,0,true,(this.mountian_pos2),0,m);
 		
 		this.player.draw();
 		
