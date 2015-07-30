@@ -20,7 +20,7 @@ Application.main= {
 
 	init:function() {
 
-		this.state = 1;
+		this.state = 0;
 		
 	//	this.app.client.visuals.setBleed(0.9);
 		

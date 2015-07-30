@@ -969,8 +969,13 @@ Player.prototype = {
 	},
 	update:function(){
 		
+		//cache game size
+		
 		var width = this.app.getWidth();
 		var height = this.app.getHeight();	
+		
+		
+		// temp speed vars to be moved in to this.speed and so on
 		
 		var speed = 0;
 		var speedm = 24;
@@ -980,10 +985,11 @@ Player.prototype = {
 		var MoveY = 0;
 		var MoveX = 0;
 		
+		// input, -1 left, 1 right; -1 up, 1 down; 0 null;
+		
 		var xdir =  (this.app.input.getHorizontal().keyboard/3.33 ||  this.app.input.getHorizontal().touch/3.33);
 		var ydir =  (this.app.input.getVertical().keyboard ||  this.app.input.getVertical().touch);
 			
-		var adjust;
 		
 		for (var i = 0; i<26;i++)
 			this.effects[i].update();
@@ -999,39 +1005,53 @@ Player.prototype = {
 		
 		this.angle-=xdir*(this.turning/this.app.getScale())*this.app.getDelta();
 		
+		
+		//  a^2/2 = always positive 
+		
+		var adjust;
+		
 		adjust = (this.angle*this.angle)*0.05;
 		
 		//Air Update
+		//is in air if timeout>0
+		//	commented out is a timeout to test jump
+		//	
+		//always reduce airtimeout
+		//aird is distance frmo ground
 		
 		if (this.airtimeout<1)
 		{
 			console.log(this.airtimeout);
 			this.airtimeout=75;//,this.air = false,this.aird=this.speed*5;
-			setTimeout(function(){
-				
-				//You can trigger this from javascript concsole
-				Application.getCurrent().game.player.jump();
-				
-				},2500);
+			//setTimeout(function(){
+			//	
+			//	//You can trigger this from javascript concsole
+			//	Application.getCurrent().game.player.jump();
+			//	
+			//	},2500);
 		}
 		this.airtimeout--;
-			this.aird*=0.9;
+		this.aird*=0.9;
 		
 		
 		
 		//Speed
-		
+		//ifspeed is smaller than 25 (should be maxspeed)
+		// always slowly speed up
+		// else
+		// slowdown
 		if (this.speed<25)
 		{
 			this.speed+=0.22*(0.10756-adjust*2);
 		}
 		else
 		{
-			if (this.speed>0)
+			//if (this.speed>0)
 			this.speed-=0.42*(0.10756-adjust*2);
 			
 		}
 		
+		//Speed less than 1 biut larger than 0.1 speed multiply speed by accel
 		if (this.speed<1)
 		if (this.speed>0.1)
 		{
@@ -1040,15 +1060,22 @@ Player.prototype = {
 			//if (this.y-adjust*10>0)
 			//	this.y-=adjust*10;
 		}
+		
+		//Speed limiter
 		this.speed = this.app.client.Math.Clamp(this.speed, this.minspeed ,this.maxspeed);
 		
 		//Input/Angle
-		
+		//if pressed
+		// and y distance <0
+		//	if y touch vector is less than -150
+		//  sharp turn increase angle
 		if (this.app.input.getPressed())
 			if (ydir<0)
 			if (this.app.input.dist.y<-150*this.app.getScale())
 				this.angle-=(this.angle*this.turning)*ydir;
 		
+		
+		//Angle Limiter
 		this.angle =  this.app.client.Math.Clamp(this.angle,-1.5,1.5) *1.01;
 		
 		//Y
@@ -1187,7 +1214,7 @@ Player.prototype = {
 		
 		var w = 0.5*this.app.getWidth()/2*this.app.getScale()*this.app.getCurrent().game.mapscale;
 		
-//		MapOffX=this.app.client.Math.Clamp(MapOffX,-w,w);
+//	MapOffX=this.app.client.Math.Clamp(MapOffX,-w,w);
 		
 		var d = this.x/200; 
 		

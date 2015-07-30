@@ -556,14 +556,14 @@ Game.prototype = {
 	//	this.map.x = MapOffX*2.9;
 	//	this.map.x = MapOffX+(width/2*this.app.getCurrent().game.mapscale);
 		
-		this.visuals.texture(this.main_snow,this.player.x,this.map.y, width, height,this.pl,0,0,0,0,m);
+		this.visuals.texture(this.main_snow,this.map.x,this.map.y, width, height,this.pl,0,0,0,0,m);
 		
 		//this.visuals.texture(this.main_mountianl,MapOffX*0.9,-MapOffY, 0, height,this.pl,0,true,this.mountian_pos,97,m);
 		//this.visuals.texture(this.main_mountian,MapOffX*0.9,-MapOffY, 0, height,this.pl,0,true,this.mountian_pos2,97,m);
 		
 		
-		this.visuals.texture(this.main_mountianl,this.player.x,this.map.y, 0, height,this.pl,0,true,(this.mountian_pos),0,m);
-		this.visuals.texture(this.main_mountian,this.player.x,this.map.y, 0, height,this.pl,0,true,(this.mountian_pos2),0,m);
+		this.visuals.texture(this.main_mountianl,this.map.x,this.map.y, 0, height,this.pl,0,true,(this.mountian_pos),0,m);
+		this.visuals.texture(this.main_mountian,this.map.x,this.map.y, 0, height,this.pl,0,true,(this.mountian_pos2),0,m);
 		
 		this.player.draw();
 		
@@ -574,7 +574,7 @@ Game.prototype = {
 		///Here 
 		this.visuals.text(this.app.getFps().toFixed(2),35,35,"#000000");
 		this.visuals.text(this.player.speed.toFixed(2),35,65,"#000000");
-	//	this.visuals.text(this.player.y.toFixed(2),35,95,"#000000");
+		this.visuals.text((width/2+MapOffX+this.player.x).toFixed(2),35,95,"#000000");
 	//	this.visuals.text(this.map.y.toFixed(2),35,125,"#000000");
 	//	this.visuals.text(m.toFixed(5),35,155,"#000000");
 	//	this.visuals.text(this.mapscale.toFixed(5),35,185,"#000000");
