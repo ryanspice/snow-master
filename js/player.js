@@ -1,7 +1,7 @@
 /* 
-	SpiceJS - player 
+	snow-master/js/player.js
 		
-		The player class inherits a game object. Hence the 
+		The player class inherits a game object. 
 		
 		var  player = SpiceJS.create(Player.prototype,Player.constructor(Application));
 	
@@ -54,6 +54,8 @@ Player.prototype = {
 		this.scale = 0.8;
 		
 		//Jumping Vars
+		//	trigger air jumping
+		//	
 		
 		this.airtrigger = false;
 		this.airtimeout = 25;
@@ -63,12 +65,33 @@ Player.prototype = {
 		//Player effects
 		
 		this.effects = [];
+		
 		for (var i = 0; i<26;i++)
 			this.effects.push((this.app.create(Object.create(part_boardSnow)).init(100,100,this.angle)));
 		
 	},
+	
 	draw:function(){
 		
+		for (var i = 0; i<26;i++)
+			this.effects[i].draw();
+		
+		this.draw_self();
+		
+		if (this.app.input.getReleased())
+		{
+			this.airforce += 2;
+			
+			if ((this.angle>1.4)||(this.angle<-1.4))
+				this.angle*=0.9;
+		}
+		
+		this.targetzoom = 0;
+		
+	},
+	
+	draw_self:function(){
+	
 		/* Cache */
 		
 		var width = this.app.getWidth();
@@ -107,17 +130,11 @@ Player.prototype = {
 		//Character Scale
 		
 		var scale =this.aird/100+ (this.scale * this.app.getCurrent().game.mapscale);
-		
-		//Draw Effects
-		
-		for (var i = 0; i<26;i++)
-			this.effects[i].draw();
-		
-			//	App.visuals.image_rotate2(PlayerBoardShadow,this.airtime+(this.x+MapOffX)+Angle*0.008,-3-this.airtime/2+(this.y+MapOffY)-Angle*0.004,0.5-Angle*0.002,+Angle*0.4,-this.w*1.5,-this.h*2,0.5);
 		var img;
 		var w;
 		var h;
 		
+		//Board Shadow
 		
 		img = this.app.getCurrent().intro.characterselect.boards[9];
 		w = img.width/2;
@@ -125,66 +142,58 @@ Player.prototype = {
 		scale+=+0.005*Math.cos(this.y);
 		this.visuals.image_rotate(img,x_board+this.x/100 + this.aird*2,y_board,scale*0.9,a*1 ,0.25,-w,-h,false);
 		
+		//Board Draw
+		
 		img = this.app.getCurrent().intro.characterselect.boards[this.app.getCurrent().intro.characterselect.boarderBoardSelect];
 		w = img.width/2;
 		h = img.height/2;
 		this.visuals.image_rotate(img,x_board,y_board,scale,a*1,1,-w,-h,false);
 		
-		
-		
+		//Body Shadow
 		
 		img = this.app.getCurrent().game.bshadow;
 		w = img.width/2;
 		h = img.height/2;
-		
 		this.visuals.image_rotate(img,w/4+x_board-a*0.08,-h/4+y_board+a*0.1,scale+0.05*Math.cos(this.y),a*0.45,0.5,-w,-h,false);
 		
+		//Body Draw
 		
 		img = this.app.getCurrent().intro.characterselect.boarderBody[this.app.getCurrent().intro.characterselect.boarderBodySelect];
 		w = img.width/2;
 		h = img.height/2;
-		
 		this.visuals.image_rotate(img,x_body,y_body,scale+0.2,a,1,-w,-h,false);
 		
+		//Head Draw 
 		
 		img = this.app.getCurrent().intro.characterselect.boarderHead[this.app.getCurrent().intro.characterselect.boarderHeadSelect];
 		this.visuals.image_rotate(img,x_head,y_head,scale+0.275,a*0.25,1,-w,-h*5,false);
 		
-		if (this.app.input.getReleased())
-		{
-			this.airforce += 2;
+		//Mapscale
+		
+		//	var s = this.speed;
+		//	s = this.app.client.Math.Clamp(s,1,2)/5;
+		//	s = 1;
+		//	this.app.getCurrent().game.mapscale = 1 -s+ MapOffY/-this.y;
+		//	this.app.getCurrent().game.mapscale = (7-this.speed);
 			
-			if ((this.angle>1.4)||(this.angle<-1.4))
-				this.angle*=0.9;
-		}
-		
-		
-	//	var s = this.speed;
-	//	s = this.app.client.Math.Clamp(s,1,2)/5;
-	//	s = 1;
-	//	this.app.getCurrent().game.mapscale = 1 -s+ MapOffY/-this.y;
-//		this.app.getCurrent().game.mapscale = (7-this.speed);
-		
-	//	this.app.getCurrent().game.mapscale = 1 - this.speed/120;
-	//	
-	//	this.app.getCurrent().game.mapscale = this.app.client.Math.Clamp(this.app.getCurrent().game.mapscale,0.5,7)
-		
-		this.targetzoom = 0;
+		//	this.app.getCurrent().game.mapscale = 1 - this.speed/120;
+		//	this.app.getCurrent().game.mapscale = this.app.client.Math.Clamp(this.app.getCurrent().game.mapscale,0.5,7)
 		
 	},
+	
 	jump:function(){
 		
 		this.air = true;
 		this.aird = this.speed*5;
 		
 	},
+	
 	update:function(){
 		
-		//cache game size
+		// dimensions
 		
 		var width = this.app.getWidth();
 		var height = this.app.getHeight();	
-		
 		
 		// temp speed vars to be moved in to this.speed and so on
 		
@@ -201,27 +210,18 @@ Player.prototype = {
 		var xdir =  (this.app.input.getHorizontal().keyboard/3.33 ||  this.app.input.getHorizontal().touch/3.33);
 		var ydir =  (this.app.input.getVertical().keyboard ||  this.app.input.getVertical().touch);
 			
-		
-		for (var i = 0; i<26;i++)
-			this.effects[i].update();
-		
 		//First Var Update
 		
 		this.curra = ((this.lasta - this.angle));
 		
 		this.lasta = this.angle;
 		
-		
 		this.angleturn = this.app.input.getHorizontal();
 		
 		this.angle-=xdir*(this.turning/this.app.getScale())*this.app.getDelta();
 		
-		
-		//  a^2/2 = always positive 
-		
-		var adjust;
-		
-		adjust = (this.angle*this.angle)*0.05;
+		for (var i = 0; i<26;i++)
+			this.effects[i].update();
 		
 		//Air Update
 		//is in air if timeout>0
@@ -244,7 +244,12 @@ Player.prototype = {
 		this.airtimeout--;
 		this.aird*=0.9;
 		
+		// Amount of angle adjustment
+		//  a^2/2 = always positive 
 		
+		var adjust;
+		
+		adjust = (this.angle*this.angle)*0.05;
 		
 		//Speed
 		//ifspeed is smaller than 25 (should be maxspeed)
@@ -282,20 +287,19 @@ Player.prototype = {
 		//  sharp turn increase angle
 		if (this.app.input.getPressed())
 			if (ydir<0)
-			if (this.app.input.dist.y<-150*this.app.getScale())
-				this.angle-=(this.angle*this.turning)*ydir;
-		
-		
+				if (this.app.input.dist.y<-150*this.app.getScale())
+					this.angle-=(this.angle*this.turning)*ydir;
+
 		//Angle Limiter
 		this.angle =  this.app.client.Math.Clamp(this.angle,-1.5,1.5) *1.01;
 		
-		//Y
+		//Y offset unused
 		
 		var offy = 0;
 		
 		offy = 10;
 		
-		//X 
+		//X  - horizontal movement, 
 		
 		if ((this.angle<-0.1))
 				MoveX = 12*(-this.angle*this.turning);
@@ -303,118 +307,116 @@ Player.prototype = {
 		if ((this.angle>0.1))
 				MoveX = 12*(-this.angle*this.turning);
 			else
-			MoveX = ((this.angle)*this.turning);
+				MoveX = ((this.angle)*this.turning);
+		
+		
+		// if angle is too wide, but not that wide, decrease angle, speed up
+	
 		
 		if ((this.angle>1)||(this.angle<-1))
 			this.angle*=0.999,MoveX*=1.2;//,this.speed*=0.99;
 		
+		// if angle is too wider, and too wide, decrease angle, slow down, decrease Y, decrease map speed
+		
 		if ((this.angle>1.5)||(this.angle<-1.5))
-			this.angle*=0.999,MoveX*=0.75,MoveY-=3*(1-this.speed/12),this.speed/=this.accel,offy-=MoveY;//,this.y-=0.1*this.speed;
-		
-		if( (adjust>0.012)||
-		 (adjust<-0.012))
 		{
-		//	MoveY-=2*(1-this.speed/12),this.speed/=this.accel;
-			//	offy+=MoveY;
-				//offy-=adjust*(this.speed/this.maxspeed)*100;
-		}
-			//offy-=5*adjust*this.speed,this.speed/=this.accel;
-	//	else
-	//	if( (adjust<0.01)&&
-	//	 (adjust>-0.01))
-			//offy-=0.5+adjust*(this.speed/this.maxspeed)*100;
-			//offy-=1*(this.speed/this.maxspeed)*200;
-		//	offy-=1*(this.speed/this.maxspeed)*200;
-	//	if( (adjust>0.012)||
-	//	 (adjust<-0.012))
-	//		MoveY--;
-
-		//MoveY = this.gravity + (this.accel+this.speed);
-		
-		
-		
-		
-		
-		var s = this.app.getCurrent().game.mapscale;
-		if (this.speed>6)
-		if (this.speed<12)
-		{
-		//var speed = this.speed - 6;
-		//
-		//this.targetzoom=speed/12;
-		//
-		//if (this.app.getCurrent().game.mapscale > 1-this.targetzoom)
-		//	this.app.getCurrent().game.mapscale*=0.999;
-		//if (this.app.getCurrent().game.mapscale < this.targetzoom)
-				//this.app.getCurrent().game.mapscale/=1.0001;
 			
-			}
+			this.angle*=0.999;
+			MoveX*=0.75;
+			MoveY-=3*(1-this.speed/12);
+			this.speed/=this.accel;
+			offy-=MoveY;
+			//,this.y-=0.1*this.speed;
+			
+		}
 		
 		
-	//	if (this.app.getCurrent().game.mapscale>0.75)
-	//			this.app.getCurrent().game.mapscale =this.aird/20;//,this.speed-=0.0005;
-	//	
-	//	if( (adjust>0.012)||
-	//	   (adjust<-0.012))
-	//			this.app.getCurrent().game.mapscale +=0.25*adjust/100,this.speed*=0.995,this.speed-=adjust/100;
-	//	//if( (adjust<0.01)&&
-	//	// (adjust>-0.01))
-	//	//	this.app.getCurrent().game.mapscale *=1.101;
-	////	if (this.app.getCurrent().game.mapscale<1.5)
-	////			this.app.getCurrent().game.mapscale +=0.0011;
+		
+		
+		
+		
+		
+		//Unused
+
+							if( (adjust>0.012)||
+							 (adjust<-0.012))
+							{
+							//	MoveY-=2*(1-this.speed/12),this.speed/=this.accel;
+								//	offy+=MoveY;
+									//offy-=adjust*(this.speed/this.maxspeed)*100;
+							}
+								//offy-=5*adjust*this.speed,this.speed/=this.accel;
+						//	else
+						//	if( (adjust<0.01)&&
+						//	 (adjust>-0.01))
+								//offy-=0.5+adjust*(this.speed/this.maxspeed)*100;
+								//offy-=1*(this.speed/this.maxspeed)*200;
+							//	offy-=1*(this.speed/this.maxspeed)*200;
+						//	if( (adjust>0.012)||
+						//	 (adjust<-0.012))
+						//		MoveY--;
+
+							//MoveY = this.gravity + (this.accel+this.speed);
+
+
+		
+
+
+							var s = this.app.getCurrent().game.mapscale;
+							if (this.speed>6)
+							if (this.speed<12)
+							{
+							//var speed = this.speed - 6;
+							//
+							//this.targetzoom=speed/12;
+							//
+							//if (this.app.getCurrent().game.mapscale > 1-this.targetzoom)
+							//	this.app.getCurrent().game.mapscale*=0.999;
+							//if (this.app.getCurrent().game.mapscale < this.targetzoom)
+									//this.app.getCurrent().game.mapscale/=1.0001;
+
+								}
+
+
+						//	if (this.app.getCurrent().game.mapscale>0.75)
+						//			this.app.getCurrent().game.mapscale =this.aird/20;//,this.speed-=0.0005;
+						//	
+						//	if( (adjust>0.012)||
+						//	   (adjust<-0.012))
+						//			this.app.getCurrent().game.mapscale +=0.25*adjust/100,this.speed*=0.995,this.speed-=adjust/100;
+						//	//if( (adjust<0.01)&&
+						//	// (adjust>-0.01))
+						//	//	this.app.getCurrent().game.mapscale *=1.101;
+						////	if (this.app.getCurrent().game.mapscale<1.5)
+						////			this.app.getCurrent().game.mapscale +=0.0011;
+		
+		
+		
+		
+		
+		
+		
+		//Scale Clamp
+		
 		this.app.getCurrent().game.mapscale = this.app.client.Math.Clamp(this.app.getCurrent().game.mapscale,1,2);
 		
 		
+		//MoveY by speed
 		
 		MoveY+=this.speed;
 		
 		//this.y +=MoveY;//this.speed * App.delta_speed - (this.drag)* App.delta_speed;
+		//MoveY is supposed to be negative MapOffY and the difference between the two is the camera offset or some sort
+		
 		this.y = -MapOffY;
 		MapOffY-=MoveY;
 		
-		//else
-		//if( (adjust<0.01)&&
-		// (adjust>-0.01))
-		//		this.app.getCurrent().game.mapscale *=1.001;
-		//else
-		//this.app.getCurrent().game.mapscale =1- 1*((this.y)/MapOffY);// + 0.1 * (-this.speed/12);
-		//MoveX/=this.app.getCurrent().game.mapscale;
+		
+		
+		//MapX and MapY
 		
 		this.app.getCurrent().game.map.x = MapOffX+(width/2);
 		this.app.getCurrent().game.map.y = -MapOffY+(height/5)+offy;
-		//this.app.getCurrent().game.map.x =this.app.getCurrent().game.mapscale;
-		//this.app.getCurrent().game.map.y =this.app.getCurrent().game.mapscale;
-		//this.app.getCurrent().game.map.yoff = -MoveY/100;
-		//this.app.getCurrent().game.map.yoff *=0.9;
-		
-		var diff = Math.round((MapOffY + this.y)/this.app.getHeight());
-		console.log(diff);
-		
-		var ya = 250;
-		
-		//if (diff<0)
-		//	this.y-=diff;
-		
-//		if (adjust<0.1)
-//			if (diff<ya/2)
-//			{
-//			offy+=4.2*(0.10756-adjust*2);
-//			
-//			}
-//			if (diff<ya)
-//			{
-//			offy+=4.2*(0.10756-adjust*2);
-//			
-//			}
-//		
-//			if (diff<ya/4)
-//			{
-//				offy +=MoveY/diff;
-
-//			//	if (this.speed>0)
-//			//	this.speed-=2.02*(0.10756-adjust*2);
-//				this.speed-=0.1;
-//			}
 		
 		
 		
@@ -425,7 +427,53 @@ Player.prototype = {
 		
 		var w = 0.5*this.app.getWidth()/2*this.app.getScale()*this.app.getCurrent().game.mapscale;
 		
-//	MapOffX=this.app.client.Math.Clamp(MapOffX,-w,w);
+		
+		
+		
+		
+
+
+		//Unused
+									//this.app.getCurrent().game.map.x =this.app.getCurrent().game.mapscale;
+									//this.app.getCurrent().game.map.y =this.app.getCurrent().game.mapscale;
+									//this.app.getCurrent().game.map.yoff = -MoveY/100;
+									//this.app.getCurrent().game.map.yoff *=0.9;
+
+									var diff = Math.round((MapOffY + this.y)/this.app.getHeight());
+									var ya = 250;
+
+									//if (diff<0)
+									//	this.y-=diff;
+
+									//		if (adjust<0.1)
+									//			if (diff<ya/2)
+									//			{
+									//			offy+=4.2*(0.10756-adjust*2);
+									//			
+									//			}
+									//			if (diff<ya)
+									//			{
+									//			offy+=4.2*(0.10756-adjust*2);
+									//			
+									//			}
+									//		
+									//			if (diff<ya/4)
+									//			{
+									//				offy +=MoveY/diff;
+
+									//			//	if (this.speed>0)
+									//			//	this.speed-=2.02*(0.10756-adjust*2);
+									//				this.speed-=0.1;
+									//			}
+
+
+
+
+									//	MapOffX=this.app.client.Math.Clamp(MapOffX,-w,w);
+		
+		
+		//The Rest to the return is the side colliding. 
+		
 		
 		var d = this.x/200; 
 		
@@ -485,6 +533,66 @@ Player.prototype = {
 		
 		
 		return;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 //		delete under here eh
 		
@@ -752,6 +860,7 @@ Player.prototype = {
 	
 };
 
+/*
 
 //var _Player = Object.create(null);
 //_Player.prototype = {
@@ -803,7 +912,7 @@ Player.prototype = {
 //console.log(_player.setId(1));
 ////console.log(_player.retrieveBoardStats());
 //console.log(_player.get());
-
+*/
 
 /*
 _Player.prototype = {
