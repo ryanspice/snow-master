@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Machine>RYAN-HOME</Machine>
+    <WindowsUser>spice</WindowsUser>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetOsVersion>10.0</TargetOsVersion>
+    <TargetOsDescription>Windows 10.0</TargetOsDescription>
+    <SolutionConfiguration>Debug|AnyCPU</SolutionConfiguration>
+    <PackageArchitecture>neutral</PackageArchitecture>
+    <PackageIdentityName>cd4b33cf-7bab-4941-902d-0cf4d0ba33f5</PackageIdentityName>
+    <IntermediateOutputPath>C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\bld\Debug\</IntermediateOutputPath>
+    <RegisteredManifestChecksum>452E2D0732FBEEE397FEEE077282681762DB0B201BB8E49AB9E7AF4339AF2CFA</RegisteredManifestChecksum>
+    <RegisteredPackageMoniker>cd4b33cf-7bab-4941-902d-0cf4d0ba33f5_1.0.0.0_neutral__79dbt6at3vfr2</RegisteredPackageMoniker>
+    <RegisteredUserModeAppID>cd4b33cf-7bab-4941-902d-0cf4d0ba33f5_79dbt6at3vfr2!App</RegisteredUserModeAppID>
+    <RegisteredPackageID>cd4b33cf-7bab-4941-902d-0cf4d0ba33f5</RegisteredPackageID>
+    <RegisteredPackagePublisher>CN=spice</RegisteredPackagePublisher>
+    <RegisteredVersion>1.0.0.0</RegisteredVersion>
+    <JitOptimizationSuppressed>True</JitOptimizationSuppressed>
+  </PropertyGroup>
+  <ItemGroup>
+    <AppXManifest Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\bin\Debug\AppxManifest.xml">
+      <PackagePath>AppxManifest.xml</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2015-08-06T01:24:51.417</Modified>
+    </AppXManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\default.html">
+      <PackagePath>default.html</PackagePath>
+      <Modified>2015-08-06T01:22:59.865</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\images\LockScreenLogo.scale-200.png">
+      <PackagePath>images\LockScreenLogo.scale-200.png</PackagePath>
+      <Modified>2015-06-05T02:32:06.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\images\SplashScreen.scale-200.png">
+      <PackagePath>images\SplashScreen.scale-200.png</PackagePath>
+      <Modified>2015-06-05T02:32:06.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\images\Square150x150Logo.scale-200.png">
+      <PackagePath>images\Square150x150Logo.scale-200.png</PackagePath>
+      <Modified>2015-06-05T02:32:06.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\images\Square44x44Logo.scale-200.png">
+      <PackagePath>images\Square44x44Logo.scale-200.png</PackagePath>
+      <Modified>2015-06-05T02:32:06.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\images\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <PackagePath>images\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
+      <Modified>2015-06-05T02:32:06.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\images\StoreLogo.png">
+      <PackagePath>images\StoreLogo.png</PackagePath>
+      <Modified>2015-06-05T02:32:06.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\images\Wide310x150Logo.scale-200.png">
+      <PackagePath>images\Wide310x150Logo.scale-200.png</PackagePath>
+      <Modified>2015-06-05T02:32:06.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\default.js">
+      <PackagePath>js\default.js</PackagePath>
+      <Modified>2015-08-06T01:24:49.786</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\WinJS\js\en-US\ui.strings.js">
+      <PackagePath>WinJS\js\en-US\ui.strings.js</PackagePath>
+      <Modified>2015-06-05T02:32:02.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\WinJS\js\base.js">
+      <PackagePath>WinJS\js\base.js</PackagePath>
+      <Modified>2015-06-24T03:36:40.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\WinJS\js\ui.js">
+      <PackagePath>WinJS\js\ui.js</PackagePath>
+      <Modified>2015-06-24T03:36:40.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\css\default.css">
+      <PackagePath>css\default.css</PackagePath>
+      <Modified>2015-06-05T02:32:02.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\WinJS\css\ui-dark.css">
+      <PackagePath>WinJS\css\ui-dark.css</PackagePath>
+      <Modified>2015-06-24T03:36:40.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\WinJS\css\ui-light.css">
+      <PackagePath>WinJS\css\ui-light.css</PackagePath>
+      <Modified>2015-06-24T03:36:40.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\WinJS\fonts\Symbols.ttf">
+      <PackagePath>WinJS\fonts\Symbols.ttf</PackagePath>
+      <Modified>2015-06-05T02:32:02.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\bin\Debug\ReverseMap\resources.pri">
+      <PackagePath>resources.pri</PackagePath>
+      <Modified>2015-08-06T01:24:51.209</Modified>
+    </AppxPackagedFile>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+</Project>
