@@ -21,9 +21,9 @@
     <Resource Language="EN-US" />
   </Resources>
   <Applications>
-    <Application Id="App" StartPage="default.html">
+    <Application Id="App" StartPage="index.html">
       <uap:VisualElements DisplayName="Snow" Description="Snow" BackgroundColor="transparent" Square150x150Logo="images\Square150x150Logo.png" Square44x44Logo="images\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="images\Wide310x150Logo.png" />
+        <uap:DefaultTile Wide310x150Logo="images\Wide310x150Logo.png"></uap:DefaultTile>
         <uap:SplashScreen Image="images\splashscreen.png" />
       </uap:VisualElements>
     </Application>
