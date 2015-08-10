@@ -136,7 +136,11 @@ var SpiceJS = Object.create({
 										self.client.loop();
 									}
 
-									self.client.initalize(AppLoop,self.scale);
+									function AppLoopData(){
+										self.client.loopData();
+									}
+
+									self.client.initalize(AppLoop,AppLoopData,self.scale);
 
 						}),this.time);
 
@@ -1349,16 +1353,21 @@ return;
 					prototype:{
 
 						//Client initalize
-						initalize:function(loop,scale) {
+						initalize:function(loop,loopdata,scale) {
 
 							//scale to scale
 							this.scale = scale;
 
 							//Assign client_f to loop
 							this.client_f = loop;
+                            
+							//Assign client_data to loop
+							this.client_data = loopdata;
 
 							//Request Animation Frame with this.client_f
 							requestAnimationFrame(this.client_f);
+                            
+                            setTimeout(loopdata,1000 / 60);
 
 							this.app.ext.cursor.set(this.app.ext.cursor.def);
 
@@ -1367,10 +1376,22 @@ return;
 						},
 
 						//Client features loop
-						loop:function(a){
+                        loopData:function(){
 
 							//Return true or false, update audio
 							this.mute = this.audio.update();
+                            
+							this.update.size_difference(this);
+                            
+							//Update Input
+							this.app.input.update();
+                            
+                            
+                            setTimeout(this.client_data,1000 / 60);
+                            
+                        },
+                        
+						loop:function(a){
 
 							//Return true or false if resized, update size
 							this.resized = this.update.size(this);
@@ -1378,16 +1399,12 @@ return;
 							//Draw frame
 							this.visuals.flip(this.scale);
 
-
-							//Update Input
-							this.app.input.update();
-
 							//Update scale
 							this.scale = this.update.scale(this);
 
 							//Update frames per second
 							this.fps = this.update.step.tick(this.second,this.mainLoop,this.app);
-
+                            
 							//Update client
 							requestAnimationFrame(this.client_f);
 						},
@@ -1406,17 +1423,21 @@ return;
 							resized:false,
 							set:0,
 							frames:0,
-
+                            
 							//Calculate client size
+                            size_difference:function(app){
+                                
+								//Calculate difference of with and height in this frame vs last frame
+								this.difference = (app.Math.Vector.Difference(new app.Math.Vec(this.last.w.toFixed(4),this.last.h.toFixed(4)),new app.Math.Vec(app.width.toFixed(4),app.height.toFixed(4))));
+
+                            },
+                            
 							size:function(app){
 
-								//Calculate difference of with and height in this frame vs last frame
-								this.difference = app.Math.Vector.Difference(new app.Math.Vec(this.last.w.toFixed(4),this.last.h.toFixed(4)),new app.Math.Vec(app.width.toFixed(4),app.height.toFixed(4)));
-
-								//If distance has changed
+								//If distance hasnt changed
 								if ((this.difference.x + this.difference.y==0))
 									return false;
-
+                                
 								//Reassign width and height
 								app.app.canvas.getCanvas().width  = this.last.w = app.width;
 								app.app.canvas.getCanvas().height = this.last.h = app.height;

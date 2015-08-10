@@ -12,6 +12,7 @@ Application.OnLoad = function (self) {
 
 	self.ext.metatag.metaFavicon("favicon.png");
 
+    
 };
 
 Application.main= {

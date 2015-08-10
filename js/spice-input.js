@@ -79,80 +79,12 @@ SpiceInput.prototype = {
 				-flags and options for input handling and other stuff
 		*/
 
-		init:function(){
-
-			/*	
+        init_pointerEvents:function(){
+          
+			/* mousewheel event			*/
 			
-				Overrides the 'holdtouch, MSHoldVisual' event
-			
-			*/
-			
-			this.scroll = (this.app.Construct(this.scroll.prototype,this.scroll.constructor)).init();
-
-			/*	
-			
-				Overrides the selection start event for selecting events
-			
-			*/
-			
-			if (!this.app.options.get("override").SelectStart){
-				this.app.Listener(this.app.canvas.canvas,'selectstart',this.preventDefault);
-			}
-
-			/*	
-			
-				Overrides the 'holdtouch, MSHoldVisual' event
-			
-			*/
-			
-			if (!this.app.options.get("override").MSHoldVisual){
-				this.app.Listener(this.app.canvas.canvas,'MSHoldVisual',this.preventDefault);
-			}
-			
-			/*	
-			
-				Overrides the ContextMenu event
-			
-			*/
-			
-			if (this.app.options.get("override").ContextMenu) {
-				this.doc.oncontextmenu = this.preventDefault;
-				this.window.self.oncontextmenu = this.preventDefault;
-			}
-
-			/*	
-			
-				Overrides dragstart event
-			
-			*/
-			
-			if (this.app.options.get("override").Drag) {
-				this.doc.ondragstart   = this.preventDefault;
-				this.window.self.ondragstart   = this.preventDefault;
-			}
-
-			/*	
-			
-				CSS based Overrides 
-			
-					- mstouch 
-					- seamless ( toggles overflow ) 
-					- tight ( zeros padding and margin )
-			
-			*/
-			
-			if (this.app.options.get("flags").mstouch){
-				this.doc.body.setAttribute("style","-ms-touch-action: none; ms-content-zooming: none; touch-action: none; -ms-overflow-style: none;");
-			}
-
-			if (this.app.options.get("flags").seamless){
-				this.doc.body.style.overflow = "hidden";
-			}
-			
-			if (this.app.options.get("flags").tight){
-				this.doc.body.style.padding = "0px", this.doc.body.style.margin = "0px auto";
-			}
-			
+			this.app.Listener(this.window.self,'mousewheel',this.scroll.event);
+            
 			/* 
 			
 				Pointer events 
@@ -294,23 +226,12 @@ SpiceInput.prototype = {
 							evt.preventDefault();
 				});
 
-			}
-
-			/* 
-			
-				mousewheel event
-				
-			*/
-			
-			this.app.Listener(this.window.self,'mousewheel',this.scroll.event);
-			
-			/* 
-			
-				Key Down and Key Up Events
-				
-				Populates supported codes
-			
-			*/
+			}  
+        },
+    
+        init_keys:function(){
+            
+			/* 	Key Down and Key Up Events - Populates supported codes */
 			
 			this.populateCodes();
 			
@@ -352,11 +273,157 @@ SpiceInput.prototype = {
 					this.app.input.listener.key_up(this.app);
 				
 			});
+            
+        },
+    
+        init_win:function(){
+            
+           // this.upointer = window.WinPointer;
+           // console.log(this.upointer);
+            
+        },
+    
+        init_options:function(){
+      
+			/*	Overrides the selection start event for selecting events	*/
+			
+			if (!this.app.options.get("override").SelectStart){
+				this.app.Listener(this.app.canvas.canvas,'selectstart',this.preventDefault);
+			}
+
+			/*	Overrides the 'holdtouch, MSHoldVisual' event */
+			
+			if (!this.app.options.get("override").MSHoldVisual){
+				this.app.Listener(this.app.canvas.canvas,'MSHoldVisual',this.preventDefault);
+			}
+			
+			/* Overrides the ContextMenu event */
+			
+			if (this.app.options.get("override").ContextMenu) {
+				this.doc.oncontextmenu = this.preventDefault;
+				this.window.self.oncontextmenu = this.preventDefault;
+			}
+
+			/*	Overrides dragstart event		*/
+			
+			if (this.app.options.get("override").Drag) {
+				this.doc.ondragstart   = this.preventDefault;
+				this.window.self.ondragstart   = this.preventDefault;
+			}
+
+			/*	CSS based Overrides 
+			
+					- mstouch 
+					- seamless ( toggles overflow ) 
+					- tight ( zeros padding and margin )
+			
+			*/
+			
+			if (this.app.options.get("flags").mstouch){
+				this.doc.body.setAttribute("style","-ms-touch-action: none; ms-content-zooming: none; touch-action: none; -ms-overflow-style: none;");
+			}
+
+			if (this.app.options.get("flags").seamless){
+				this.doc.body.style.overflow = "hidden";
+			}
+			
+			if (this.app.options.get("flags").tight){
+				this.doc.body.style.padding = "0px", this.doc.body.style.margin = "0px auto";
+			}      
+            
+        },
+
+		init:function(){
+
+			//Overrides the 'holdtouch, MSHoldVisual' event
+			
+			this.scroll = (this.app.Construct(this.scroll.prototype,this.scroll.constructor)).init();
+            
+            this.init_options();
+            this.init_pointerEvents();
+            this.init_keys();
+            
+            this.detect();
 
 			return this;
 		},
 
+        detect:function(){
+            
+          // if (window.winPointer)
+          //     this.init_win();
+          // else
+          //     log("No Win");
+            
+        },
+    
+		/* Update Input */
+		
+        winupdate:function(){
+            
+            if (this.pressed!=this.lastpressed)
+                this.released = true,this.dist.x=0,this.dist.y=0;
+            
+            this.lastpressed = this.pressed;
+            
+            
+            try {
+                
+                var w = Windows;
+                var p = Windows.UI.Input.PointerPoint.getCurrentPoint(1);
+                
+                
+                this.pressed = (Windows.UI.Input.PointerPoint.getCurrentPoint(1).isInContact);
+                this.pointerDevice = (Windows.UI.Input.PointerPoint.getCurrentPoint(1).pointerDevice);
+                
+            }catch(e){
+            
+            Windows = false;
+            }
+            
+          //  if (Windows)
+          //  if (Windows.UI.Input.PointerPoint.getCurrentPoint(1).isInContact)
+          //  this.pressed = (Windows.UI.Input.PointerPoint.getCurrentPoint(1).isInContact);
+            
+        },
+    
+		update:function() {
 
+            
+			//Reset last positions
+			this.last.x = this.x;
+			this.last.y = this.y;
+
+			//Confine x,y
+			this.confined();
+
+			//Reset variables
+			this.press = false;
+			this.touch = 0;
+			this.window.inside = 0;
+			this.wheelDelta = 0;
+
+			//If pressed, increase duration, otherwise reset
+			this.pressed?this.duration++:this.duration=0;
+            
+			//if released, reset release and distance. else nothing.
+			this.released?(this.released=false,this.dist.x=0,this.dist.y=0):null;
+            
+            this.winupdate();
+            
+			//reset code released, unused?
+			this.codereleased = 0;
+
+			//decrease delay if delay>0
+			(this.delay>0)?this.delay-=Math.floor(this.delay-1*this.app.getDelta()):null;
+    
+        
+    
+    
+    
+		return true;
+		},
+    
 		/*
 		Listeners
 		*/
@@ -367,7 +434,6 @@ SpiceInput.prototype = {
 
 							//Input down/press polyfill
 							down:function(evt) {
-
 								//Grab parent
 								var input = evt.target.app.input;
 
@@ -385,7 +451,9 @@ SpiceInput.prototype = {
 								//Track touch downs, make CheckTouchDown and CheckTouchUp for buttons
 
 								//Flags
+                                if (!Windows)
 								input.pressed = true;
+                                if (!Windows)
 								input.press = true;
 
 								//Reset distance
@@ -405,6 +473,10 @@ SpiceInput.prototype = {
 
 								var mouse_last = this.mouse_last; 
 								//sET PRESS
+                                
+                                if (input.pressed)
+                                {
+                                if (!Windows)
 								input.press = true;
 								input.x = evt.clientX || evt.x || evt.pageX;
 								input.y = evt.clientY || evt.y || evt.pageY;
@@ -412,7 +484,7 @@ SpiceInput.prototype = {
 								input.dist.y = (input.y-input.start.y)*evt.target.app.getScale();
 								
 								
-	//		console.log(this.mouse_last-input.dist.x);
+	//		log(this.mouse_last-input.dist.x);
 								
 								if (input.dist.x>0)
 									if (this.mouse_last>input.dist.x)
@@ -423,7 +495,8 @@ SpiceInput.prototype = {
 										input.start.x = input.x, input.dist.x = 0;
 								
 								this.mouse_last =  input.dist.x;
-								
+                                }
+                                
 							},
 
 							up:function(evt) {
@@ -460,14 +533,15 @@ SpiceInput.prototype = {
 							},
 
 							touch:function(evt){
+return;
 							//	var input = touch.target.app.input;
 								
 								
-								//console.log(input,touch);
+								//log(input,touch);
 								try {
 								var input = evt.target.app.input || evt;
 								} catch (e){
-									var input = evt; console.log(evt);								
+									var input = evt; log(evt);								
 								};
 								input.touch = true;
 								
@@ -641,41 +715,6 @@ SpiceInput.prototype = {
 			
 		},
 		
-		/*
-		
-			Update Input
-		
-		*/
-		
-		update:function() {
-
-			//Reset last positions
-			this.last.x = this.x;
-			this.last.y = this.y;
-
-			//Confine x,y
-			this.confined();
-
-			//Reset variables
-			this.press = false;
-			this.touch = 0;
-			this.window.inside = 0;
-			this.wheelDelta = 0;
-
-			//If pressed, increase duration, otherwise reset
-			this.pressed?this.duration++:this.duration=0;
-
-			//if released, reset release and distance. else nothing.
-			this.released?(this.released=false,this.dist.x=0,this.dist.y=0):null;
-
-			//reset code released, unused?
-			this.codereleased = 0;
-
-			//decrease delay if delay>0
-			(this.delay>0)?this.delay-=Math.floor(this.delay-1*this.app.getDelta()):null;
-
-		return true;
-		},
 		
 		/*
 		

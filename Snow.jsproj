@@ -179,6 +179,9 @@
     <Content Include="WinJS\js\ui.js" />
     <None Include="Snow_TemporaryKey.pfx" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="cs\" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />
   <!-- To modify your build process, add your task inside one of the targets below then uncomment
        that target and the DisableFastUpToDateCheck PropertyGroup. 
