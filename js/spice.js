@@ -147,7 +147,7 @@ var SpiceJS = Object.create({
 						//Initalize client
 						this.client.init(name,w,h);
 
-						this.input = this.Construct(this.input.prototype,this.input.constructor).init();
+						this.input = this.Construct(this.input.prototype,this.input.constructor);//.init();
 					}
 				},
 

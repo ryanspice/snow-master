@@ -9,11 +9,11 @@
 			if (args.detail.previousExecutionState !== activation.ApplicationExecutionState.terminated) {
 			    // TODO: This application has been newly launched. Initialize your application here.
 
-               var wp = window.wp = Windows.UI.Input.PointerPoint;
-               var wps = window.wps = Windows.UI.Input.PointerPoint.pointerDevice;
-                window.WinInput = true;
-                window.WinDevice = true;
-                
+               //var wp = window.wp = Windows.UI.Input.PointerPoint;
+               //var wps = window.wps = Windows.UI.Input.PointerPoint.pointerDevice;
+                //window.WinInput = true;
+                //window.WinDevice = true;
+                console.log(Application.input.init(Windows.UI.Input.PointerPoint));
                 
 			} else {
 				// TODO: This application was suspended and then terminated.

@@ -334,15 +334,21 @@ SpiceInput.prototype = {
             
         },
 
-		init:function(){
+		init:function(pointerPoint){
 
+            this.pointerPoint = pointerPoint;
+            
 			//Overrides the 'holdtouch, MSHoldVisual' event
 			
 			this.scroll = (this.app.Construct(this.scroll.prototype,this.scroll.constructor)).init();
             
             this.init_options();
-            this.init_pointerEvents();
-            this.init_keys();
+            
+
+            if (!this.pointerPoint)
+                this.init_pointerEvents();
+            if (!this.pointerPoint)
+                this.init_keys();
             
             this.detect();
 
@@ -358,13 +364,122 @@ SpiceInput.prototype = {
             
         },
     
+        // New Input Controls Manager
+        //  -- Has App
+        //    - up
+        //    - down
+        //    - move
+    
+        controls:{
+          
+            app:null,
+							mouse_last:0,
+            
+            up:function(data){
+                
+                var input;
+                
+                if (!this.app)
+                    this.app = data.app;
+                
+                input = this.app.input;
+                
+
+				input.end.x = data.x;
+				input.end.y = data.y;
+
+				input.touched.uplist.push({x:input.x,y:input.y});
+				input.touched.last = {x:input.x,y:input.y};
+				input.touched.count;
+
+				input.press = false;
+				input.pressed = false;
+				input.released = true;
+				input.touch = false;
+				input.dist.x = (input.x-input.start.x)*this.app.getScale();
+				input.dist.y = (input.y-input.start.y)*this.app.getScale();           
+                
+                
+                return true;
+            },
+            
+            down:function(data){
+                
+                var input;
+                
+                if (!this.app)
+                    this.app = data.app;
+                
+                input = this.app.input;
+                
+                input.x = input.start.x = data.x;
+                input.y = input.start.y = data.y;
+                
+                input.press = true;
+                input.pressed = true;
+                
+				input.dist.x = 0;
+				input.dist.y = 0;
+                
+				input.touched.downlist.push({x:input.x,y:input.y});
+                console.log('down');
+                return true;
+            },
+            
+            move:function(data){
+                
+                var input;
+                
+                if (!this.app)
+                    this.app = data.app;
+                
+                input = this.app.input;
+            
+                if (input.pressed)
+                {
+					input.press = true;
+					input.x = data.x;
+					input.y = data.y;
+					input.dist.x = (input.x-input.start.x)*this.app.getScale();
+					input.dist.y = (input.y-input.start.y)*this.app.getScale();
+					
+					
+					if (input.dist.x>0)
+						if (this.mouse_last>input.dist.x)
+							input.start.x = input.x, input.dist.x = 0;
+					
+					if (input.dist.x<0)
+						if (this.mouse_last<input.dist.x)
+							input.start.x = input.x, input.dist.x = 0;
+					
+					this.mouse_last =  input.dist.x;
+                }
+    
+            
+                return true;
+            },
+            
+        },
+    
+    
+    
 		/* Update Input */
 		
         winupdate:function(){
+            var i = 0;
+            var data = {
+                app:this.app,
+                x:0,
+                y:0
+            }
             
-            if (this.pressed!=this.lastpressed)
+            if ((this.pressed==false)&&(this.lastpressed==true))
+            {
                 this.released = true,this.dist.x=0,this.dist.y=0;
             
+                this.controls.up(data);
+            }
+                
             this.lastpressed = this.pressed;
             
             if (!this.wininitalize)
@@ -379,23 +494,34 @@ SpiceInput.prototype = {
                 this.wininitalize = true;
                 
                     
+                data = {
+                    app:this.app,
+                    x:this.winposition.x,
+                    y:this.winposition.y
+                };
                 
             }catch(e){
             
+                data = {
+                    app:this.app,
+                    x:0,
+                    y:0
+                };
+                
             Windows = false;
             }
             else{
                 this.winpoint = Windows.UI.Input.PointerPoint.getCurrentPoint(1);
-                this.winposition = Windows.UI.Input.PointerPoint.getCurrentPoint(1).rawPosition;
+                this.winposition = this.pointerPoint.getCurrentPoint(1).rawPosition;
                 this.pressed = (this.winpoint.isInContact);
                 this.pointerDevice = (this.winpoint.pointerDevice);
                 
+                var pt = this.pointerPoint.getCurrentPoint(1);
+                var ptTargetProperties = pt.properties;
                 
 
                         if (this.released)
                                             {
-                                                               var pt = Windows.UI.Input.PointerPoint.getCurrentPoint(1);
-                                                        var ptTargetProperties = pt.properties;
 
                                                         var details = "Pointer Id: " + pt.pointerId + " device: " + pt.pointerDevice.pointerDeviceType;
                                                 
@@ -433,19 +559,26 @@ SpiceInput.prototype = {
                                                 details+="\n x:"+this.winposition.x + " y: "+this.winposition.y;
                                                        //details += "\nPointer location (target): " + pt.offsetX + ", " + pt.offsetY;
                                                        //details += "\nPointer location (screen): " + pt.screenX + ", " + pt.screenY;   
-                                                console.log(pt.pointerDevice);
-                                                console.log(details);
+                                                //console.log(pt.pointerDevice);
+                                                //console.log(details);
                                             }
+i=this.winpoint;
 
-
+                data.x = this.winposition.x;
+                data.y = this.winposition.y;
                 
                 
+            if ((this.pressed==true)&&(this.lastpressed==true))
+                this.controls.move(data);
                 
             }
             
+
             
+            if ((this.pressed==true)&&(this.lastpressed==false))
+                this.controls.down(data);
             
-            
+           // console.log(i)
           //  if (Windows)
           //  if (Windows.UI.Input.PointerPoint.getCurrentPoint(1).isInContact)
           //  this.pressed = (Windows.UI.Input.PointerPoint.getCurrentPoint(1).isInContact);

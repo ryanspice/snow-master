@@ -218,7 +218,7 @@ Player.prototype = {
 		
 		this.angleturn = this.app.input.getHorizontal();
 		
-		this.angle-=xdir*(this.turning/this.app.getScale())*this.app.getDelta();
+		this.angle-=xdir*(this.turning)*this.app.getDelta();
 		
 		for (var i = 0; i<26;i++)
 			this.effects[i].update();
@@ -415,7 +415,7 @@ Player.prototype = {
 		
 		//MapX and MapY
 		
-		this.app.getCurrent().game.map.x = MapOffX+(width/2);
+		this.app.getCurrent().game.map.x = MapOffX*0.5+(width/2);
 		this.app.getCurrent().game.map.y = -MapOffY+(height/5)+offy;
 		
 		
@@ -701,7 +701,7 @@ Player.prototype = {
 			var ydir =  (this.app.input.getVertical().keyboard ||  this.app.input.getVertical().touch);
 		
 		
-			this.angle-=xdir*(this.turning/this.app.getScale())*this.app.getDelta();
+			this.angle-=xdir*(this.turning)*this.app.getDelta();
 		
 		
 		//console.log(this.x);

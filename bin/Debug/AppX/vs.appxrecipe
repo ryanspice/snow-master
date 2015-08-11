@@ -416,7 +416,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\default.js">
       <PackagePath>js\default.js</PackagePath>
-      <Modified>2015-08-11T03:43:57.357</Modified>
+      <Modified>2015-08-11T04:35:20.933</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\game.js">
       <PackagePath>js\game.js</PackagePath>
@@ -444,15 +444,15 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\player.js">
       <PackagePath>js\player.js</PackagePath>
-      <Modified>2015-08-06T01:59:09.228</Modified>
+      <Modified>2015-08-11T05:41:39.583</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\spice-input.js">
       <PackagePath>js\spice-input.js</PackagePath>
-      <Modified>2015-08-11T04:16:45.965</Modified>
+      <Modified>2015-08-11T05:35:38.917</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\spice.js">
       <PackagePath>js\spice.js</PackagePath>
-      <Modified>2015-08-11T03:42:50.422</Modified>
+      <Modified>2015-08-11T05:38:52.936</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\ui\characterselect.js">
       <PackagePath>js\ui\characterselect.js</PackagePath>
