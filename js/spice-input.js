@@ -280,7 +280,8 @@ SpiceInput.prototype = {
             
            // this.upointer = window.WinPointer;
            // console.log(this.upointer);
-            
+            this.wininitalize = false;
+            this.winpoint = null;
         },
     
         init_options:function(){
@@ -366,7 +367,7 @@ SpiceInput.prototype = {
             
             this.lastpressed = this.pressed;
             
-            
+            if (!this.wininitalize)
             try {
                 
                 var w = Windows;
@@ -375,11 +376,75 @@ SpiceInput.prototype = {
                 
                 this.pressed = (Windows.UI.Input.PointerPoint.getCurrentPoint(1).isInContact);
                 this.pointerDevice = (Windows.UI.Input.PointerPoint.getCurrentPoint(1).pointerDevice);
+                this.wininitalize = true;
+                
+                    
                 
             }catch(e){
             
             Windows = false;
             }
+            else{
+                this.winpoint = Windows.UI.Input.PointerPoint.getCurrentPoint(1);
+                this.winposition = Windows.UI.Input.PointerPoint.getCurrentPoint(1).rawPosition;
+                this.pressed = (this.winpoint.isInContact);
+                this.pointerDevice = (this.winpoint.pointerDevice);
+                
+                
+
+                        if (this.released)
+                                            {
+                                                               var pt = Windows.UI.Input.PointerPoint.getCurrentPoint(1);
+                                                        var ptTargetProperties = pt.properties;
+
+                                                        var details = "Pointer Id: " + pt.pointerId + " device: " + pt.pointerDevice.pointerDeviceType;
+                                                
+                                                        switch (pt.pointerDevice.pointerDeviceType) {
+                                                            case "mouse":
+                                                            case 2:
+                                                                details += "\nPointer type: mouse";
+                                                                details += "\nLeft button: " + ptTargetProperties.isLeftButtonPressed;
+                                                                details += "\nRight button: " + ptTargetProperties.isRightButtonPressed;
+                                                                details += "\nWheel button: " + ptTargetProperties.isMiddleButtonPressed;
+                                                                details += "\nX1 button: " + ptTargetProperties.isXButton1Pressed;
+                                                                details += "\nX2 button: " + ptTargetProperties.isXButton2Pressed;
+                                                                break;
+                                                            case "pen":
+                                                                details += "\nPointer type: pen";
+                                                                if (pt.isInContact) {
+                                                                    details += "\nPressure: " + ptTargetProperties.pressure;
+                                                                    details += "\nrotation: " + ptTargetProperties.rotation;
+                                                                    details += "\nTilt X: " + ptTargetProperties.tiltX;
+                                                                    details += "\nTilt Y: " + ptTargetProperties.tiltY;
+                                                                    details += "\nBarrel button pressed: " + ptTargetProperties.isBarrelButtonPressed;
+                                                                }
+                                                                break;
+                                                            case "touch":
+                                                                details += "\nPointer type: touch";
+                                                                details += "\nPressure: " + ptTargetProperties.pressure;
+                                                                details += "\nrotation: " + ptTargetProperties.rotation;
+                                                                details += "\nTilt X: " + ptTargetProperties.tiltX;
+                                                                details += "\nTilt Y: " + ptTargetProperties.tiltY;
+                                                                break;
+                                                            default:
+                                                                details += "\nPointer type: " + "n/a";
+                                                                break;
+                                                        }
+                                                details+="\n x:"+this.winposition.x + " y: "+this.winposition.y;
+                                                       //details += "\nPointer location (target): " + pt.offsetX + ", " + pt.offsetY;
+                                                       //details += "\nPointer location (screen): " + pt.screenX + ", " + pt.screenY;   
+                                                console.log(pt.pointerDevice);
+                                                console.log(details);
+                                            }
+
+
+                
+                
+                
+            }
+            
+            
+            
             
           //  if (Windows)
           //  if (Windows.UI.Input.PointerPoint.getCurrentPoint(1).isInContact)

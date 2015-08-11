@@ -13,7 +13,8 @@
                var wps = window.wps = Windows.UI.Input.PointerPoint.pointerDevice;
                 window.WinInput = true;
                 window.WinDevice = true;
-
+                
+                
 			} else {
 				// TODO: This application was suspended and then terminated.
 				// To create a smooth user experience, restore application state here so that it looks like the app never stopped running.
