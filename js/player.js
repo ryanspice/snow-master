@@ -52,6 +52,12 @@ Player.prototype = {
 		MapOffY = 0;
 		MapOffX = 0;
 		this.scale = 0.8;
+        
+        this.offx = 0;
+        
+        
+        
+        this.view = 1;
 		
 		//Jumping Vars
 		//	trigger air jumping
@@ -63,12 +69,18 @@ Player.prototype = {
 		this.aird = 10;
 		
 		//Player effects
-		
 		this.effects = [];
 		
 		for (var i = 0; i<26;i++)
 			this.effects.push((this.app.create(Object.create(part_boardSnow)).init(100,100,this.angle)));
-		
+        
+        
+        
+		setTimeout   (function(){
+
+		Application.input.init();
+        },100);
+        
 	},
 	
 	draw:function(){
@@ -112,10 +124,14 @@ Player.prototype = {
 		
 		var a =  -charCos * (180/Math.PI);
 		
+        
+        if (this.view==1)
+		a = -a;
+        
 		//Xpositions
 		
-		var x = this.app.getCurrent().game.map.x + this.x;
-		var map_x = -width + this.app.getCurrent().game.map.x;
+		var x = this.x;
+		var map_x = this.app.getCurrent().game.map.x;
 		var x_board =  x + map_x;
 		var x_body = a/15+x + map_x;
 		var x_head = a/15+x + map_x;
@@ -210,6 +226,8 @@ Player.prototype = {
 		var xdir =  (this.app.input.getHorizontal().keyboard/3.33 ||  this.app.input.getHorizontal().touch/3.33);
 		var ydir =  (this.app.input.getVertical().keyboard ||  this.app.input.getVertical().touch);
 			
+        if (this.view==1)
+            xdir=-xdir;
 		//First Var Update
 		
 		this.curra = ((this.lasta - this.angle));
@@ -220,6 +238,8 @@ Player.prototype = {
 		
 		this.angle-=xdir*(this.turning)*this.app.getDelta();
 		
+
+        
 		for (var i = 0; i<26;i++)
 			this.effects[i].update();
 		
@@ -291,8 +311,15 @@ Player.prototype = {
 					this.angle-=(this.angle*this.turning)*ydir;
 
 		//Angle Limiter
+        
+        
+       // if (this.view==0)
 		this.angle =  this.app.client.Math.Clamp(this.angle,-1.5,1.5) *1.01;
 		
+      // if (this.view==1)
+      // this.angle =  this.app.client.Math.Clamp(this.angle,-1.5,1.5) *0.99;
+		
+        
 		//Y offset unused
 		
 		var offy = 0;
@@ -411,19 +438,38 @@ Player.prototype = {
 		this.y = -MapOffY;
 		MapOffY-=MoveY;
 		
+       var offx = -MapOffX*1.5;
+       var offx = -this.x;
+       this.view = 1;
+       
+     // if (this.view==0)
+    //     offx = 0;
 		
+        
+        //var offx = -this.x; 
+        
 		
 		//MapX and MapY
 		
-		this.app.getCurrent().game.map.x = MapOffX*0.5+(width/2);
-		this.app.getCurrent().game.map.y = -MapOffY+(height/5)+offy;
 		
 		
 		
 		
-		this.x = this.app.getCurrent().game.map.x;
+		//this.x = this.app.getCurrent().game.map.x*0.19;
+		this.x +=MoveX;
 		
-		MapOffX-=MoveX;
+		MapOffX-=MoveX;//*2.5;
+        
+        
+        this.offx += MoveX*1.5;
+        
+        this.offx*=0.9;
+        
+        
+		this.app.getCurrent().game.map.x = MapOffX + (width*0.5+this.offx);//(-MapOffX+(width*0.5) + offx) ;
+		this.app.getCurrent().game.map.y = -MapOffY+(height*0.25)+offy;
+        
+        
 		
 		var w = 0.5*this.app.getWidth()/2*this.app.getScale()*this.app.getCurrent().game.mapscale;
 		
@@ -479,6 +525,18 @@ Player.prototype = {
 		
 		var l = 80;
 		var leftx = this.x-l;
+		
+		
+		
+		return;
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		

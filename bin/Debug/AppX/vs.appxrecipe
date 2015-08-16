@@ -10,19 +10,19 @@
     <PackageArchitecture>neutral</PackageArchitecture>
     <PackageIdentityName>cd4b33cf-7bab-4941-902d-0cf4d0ba33f5</PackageIdentityName>
     <IntermediateOutputPath>C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\bld\Debug\</IntermediateOutputPath>
-    <RegisteredManifestChecksum>EF8146FDCBC11AB95D421309B90AA670B54BE1E9206197517FBD527CA2557E9C</RegisteredManifestChecksum>
-    <RegisteredPackageMoniker>cd4b33cf-7bab-4941-902d-0cf4d0ba33f5_1.0.0.0_neutral__79dbt6at3vfr2</RegisteredPackageMoniker>
+    <RegisteredManifestChecksum>AF453498AFE41831E47C3078B077A5B4DF253B68B6522BEFD7F1851188268C91</RegisteredManifestChecksum>
+    <RegisteredPackageMoniker>cd4b33cf-7bab-4941-902d-0cf4d0ba33f5_0.11.0.0_neutral__79dbt6at3vfr2</RegisteredPackageMoniker>
     <RegisteredUserModeAppID>cd4b33cf-7bab-4941-902d-0cf4d0ba33f5_79dbt6at3vfr2!App</RegisteredUserModeAppID>
     <RegisteredPackageID>cd4b33cf-7bab-4941-902d-0cf4d0ba33f5</RegisteredPackageID>
     <RegisteredPackagePublisher>CN=spice</RegisteredPackagePublisher>
-    <RegisteredVersion>1.0.0.0</RegisteredVersion>
+    <RegisteredVersion>0.11.0.0</RegisteredVersion>
     <JitOptimizationSuppressed>True</JitOptimizationSuppressed>
   </PropertyGroup>
   <ItemGroup>
     <AppXManifest Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\bin\Debug\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2015-08-09T17:43:29.938</Modified>
+      <Modified>2015-08-16T03:11:57.521</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
@@ -362,6 +362,10 @@
       <PackagePath>tile.png</PackagePath>
       <Modified>2015-08-06T01:59:09.290</Modified>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\audio\BenTinson-AmbientElectroHouse1.mp3">
+      <PackagePath>audio\BenTinson-AmbientElectroHouse1.mp3</PackagePath>
+      <Modified>2015-08-06T01:59:08.909</Modified>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\browserconfig.xml">
       <PackagePath>browserconfig.xml</PackagePath>
       <Modified>2015-08-06T01:59:08.916</Modified>
@@ -396,7 +400,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\index.html">
       <PackagePath>index.html</PackagePath>
-      <Modified>2015-08-11T03:41:49.659</Modified>
+      <Modified>2015-08-16T03:12:42.076</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\favicon.ico">
       <PackagePath>favicon.ico</PackagePath>
@@ -412,15 +416,15 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\audio.js">
       <PackagePath>js\audio.js</PackagePath>
-      <Modified>2015-08-06T01:59:09.190</Modified>
+      <Modified>2015-08-13T02:53:55.003</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\default.js">
       <PackagePath>js\default.js</PackagePath>
-      <Modified>2015-08-11T04:35:20.933</Modified>
+      <Modified>2015-08-13T03:51:47.377</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\game.js">
       <PackagePath>js\game.js</PackagePath>
-      <Modified>2015-08-06T01:59:09.195</Modified>
+      <Modified>2015-08-16T03:25:24.701</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\intro.js">
       <PackagePath>js\intro.js</PackagePath>
@@ -440,19 +444,19 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\particles.js">
       <PackagePath>js\particles.js</PackagePath>
-      <Modified>2015-08-06T01:59:09.221</Modified>
+      <Modified>2015-08-13T03:02:29.757</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\player.js">
       <PackagePath>js\player.js</PackagePath>
-      <Modified>2015-08-11T05:41:39.583</Modified>
+      <Modified>2015-08-16T03:54:16.822</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\spice-input.js">
       <PackagePath>js\spice-input.js</PackagePath>
-      <Modified>2015-08-11T05:35:38.917</Modified>
+      <Modified>2015-08-13T03:55:55.074</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\spice.js">
       <PackagePath>js\spice.js</PackagePath>
-      <Modified>2015-08-11T05:38:52.936</Modified>
+      <Modified>2015-08-16T03:13:05.016</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\js\ui\characterselect.js">
       <PackagePath>js\ui\characterselect.js</PackagePath>
@@ -500,7 +504,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\bin\Debug\ReverseMap\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2015-08-09T17:43:29.752</Modified>
+      <Modified>2015-08-16T03:11:57.295</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

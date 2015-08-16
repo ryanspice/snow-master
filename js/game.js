@@ -548,10 +548,10 @@ Game.prototype = {
 		
 		var m = this.mapscale;// + 0.5*Math.cos(this.map.x/360);
 		
-		this.mountian_pos =(-width/2);//+this.main_mountian.width/2;
+		this.mountian_pos =(-width);//+this.main_mountian.width/2;
 		
 		
-		this.mountian_pos2 =width*2.75;
+		this.mountian_pos2 =width*3;
 		
 	//	this.map.x = MapOffX*2.9;
 	//	this.map.x = MapOffX+(width/2*this.app.getCurrent().game.mapscale);
@@ -561,9 +561,11 @@ Game.prototype = {
 		//this.visuals.texture(this.main_mountianl,MapOffX*0.9,-MapOffY, 0, height,this.pl,0,true,this.mountian_pos,97,m);
 		//this.visuals.texture(this.main_mountian,MapOffX*0.9,-MapOffY, 0, height,this.pl,0,true,this.mountian_pos2,97,m);
 		
+        var mountain_left_offx = this.map.x*2 - this.main_mountianl.width;
+        var mountain_right_offx = this.map.x*2;
 		
-		this.visuals.texture(this.main_mountianl,this.map.x,this.map.y, 0, height,this.pl,0,true,(this.mountian_pos),0,m);
-		this.visuals.texture(this.main_mountian,this.map.x,this.map.y, 0, height,this.pl,0,true,(this.mountian_pos2),0,m);
+		this.visuals.texture(this.main_mountianl,mountain_left_offx,this.map.y*2, 0, height,this.pl,0,true,(0),0,m+1);
+		this.visuals.texture(this.main_mountian,mountain_right_offx,this.map.y*2, 0, height,this.pl,0,true,(this.mountian_pos2),0,m+1);
 		
 		this.player.draw();
 		

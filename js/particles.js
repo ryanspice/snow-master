@@ -3,7 +3,7 @@ var SB_Particles = new Array();
 var LastX = 0; 
 var LastY = 0;
 var SB_ = Object.create(null);
-	SB_.size = 125;
+	SB_.size = 50;
 	SB_.prototype = {
 		_draw:function(){
 		
@@ -26,7 +26,7 @@ var SB_ = Object.create(null);
 				y--;
 						SB_Particles[_R] = Object.create(SB_.prototype);
 						SB_Particles[_R].x = -this.app.getScaledWidth()/2 + (Math.random()*this.app.getScaledWidth()*2);
-						SB_Particles[_R].y = y+Math.random()*30-Math.random()*50;
+						SB_Particles[_R].y = y+Math.random()*170-Math.random()*75;
 						SB_Particles[_R].a = 0;
 						SB_Particles[_R].r = 360/6;
 						SB_Particles[_R].n = 6;
@@ -178,7 +178,7 @@ var part_boardSnow =
 			//this.x = ((this.x)/2 - (-MapOffX*this.app.getScale()));
 			this.del = false;
 			this.y = this.app.getCurrent().game.map.y;
-			this.x = this.app.getCurrent().game.player.x+MapOffX	;
+			this.x = this.app.getCurrent().game.player.x+this.app.getWidth()/2;
 
 			this.create(this.x,this.y,this.app.getCurrent().game.player.angle);
 			

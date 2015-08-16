@@ -13,6 +13,10 @@
                //var wps = window.wps = Windows.UI.Input.PointerPoint.pointerDevice;
                 //window.WinInput = true;
                 //window.WinDevice = true;
+                
+                
+                
+                
                 console.log(Application.input.init(Windows.UI.Input.PointerPoint));
                 
 			} else {

@@ -22,15 +22,13 @@
 //
 
 
-
 var Steve;
-
-"use strict";
 var LOG_ENABLE = (true);
 
 var log = ((LOG_ENABLE)?function(log){console.log(log)}:function(){});
 
 window.scripts = [
+'js/default.js',
 'js/options.js',
 'js/player.js',
 'js/particles.js',
@@ -39,11 +37,9 @@ window.scripts = [
 'js/ui/characterselect.js',
 'js/ui/gameover.js',
 'js/intro.js',
-'js/game.js'
- ];
- 
- 
- 
+'js/game.js',
+'js/audio.js'
+ ]; 
 
 var SpiceJS = Object.create({
 

@@ -345,9 +345,10 @@ SpiceInput.prototype = {
             this.init_options();
             
 
-            if (!this.pointerPoint)
-                this.init_pointerEvents();
-            if (!this.pointerPoint)
+           // if (!this.pointerPoint)
+                this.init_pointerEvents(),console.log('pointer');
+            
+         //   if (!this.pointerPoint)
                 this.init_keys();
             
             this.detect();
@@ -373,7 +374,8 @@ SpiceInput.prototype = {
         controls:{
           
             app:null,
-							mouse_last:0,
+            
+            mouse_lastx:null,
             
             up:function(data){
                 
@@ -399,7 +401,6 @@ SpiceInput.prototype = {
 				input.dist.x = (input.x-input.start.x)*this.app.getScale();
 				input.dist.y = (input.y-input.start.y)*this.app.getScale();           
                 
-                
                 return true;
             },
             
@@ -422,8 +423,9 @@ SpiceInput.prototype = {
 				input.dist.y = 0;
                 
 				input.touched.downlist.push({x:input.x,y:input.y});
-                console.log('down');
+                
                 return true;
+                
             },
             
             move:function(data){
@@ -445,23 +447,21 @@ SpiceInput.prototype = {
 					
 					
 					if (input.dist.x>0)
-						if (this.mouse_last>input.dist.x)
+						if (this.mouse_lastx>input.dist.x)
 							input.start.x = input.x, input.dist.x = 0;
 					
 					if (input.dist.x<0)
-						if (this.mouse_last<input.dist.x)
+						if (this.mouse_lastx<input.dist.x)
 							input.start.x = input.x, input.dist.x = 0;
 					
-					this.mouse_last =  input.dist.x;
+					this.mouse_lastx =  input.dist.x;
                 }
-    
             
                 return true;
+                
             },
             
         },
-    
-    
     
 		/* Update Input */
 		

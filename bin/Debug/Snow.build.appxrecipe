@@ -270,6 +270,9 @@
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\tile.png">
       <PackagePath>tile.png</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\audio\BenTinson-AmbientElectroHouse1.mp3">
+      <PackagePath>audio\BenTinson-AmbientElectroHouse1.mp3</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\spice\OneDrive\SharedSnow\Universal_Snow\Snow\browserconfig.xml">
       <PackagePath>browserconfig.xml</PackagePath>
     </AppxPackagedFile>

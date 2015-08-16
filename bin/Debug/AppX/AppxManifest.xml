@@ -7,7 +7,7 @@
 
     For more information on package manifest files, see http://go.microsoft.com/fwlink/?LinkID=241727
   -->
-  <Identity Name="cd4b33cf-7bab-4941-902d-0cf4d0ba33f5" Version="1.0.0.0" Publisher="CN=spice" ProcessorArchitecture="neutral" />
+  <Identity Name="cd4b33cf-7bab-4941-902d-0cf4d0ba33f5" Version="0.11.0.0" Publisher="CN=spice" ProcessorArchitecture="neutral" />
   <mp:PhoneIdentity PhoneProductId="cd4b33cf-7bab-4941-902d-0cf4d0ba33f5" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Snow</DisplayName>
