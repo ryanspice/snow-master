@@ -152,7 +152,7 @@ var part_boardSnow =
 			//this.visuals.rect_ext(this.x+MapOffX,this.y+MapOffY,25,35,1,1,1,"#FFFFFF");	
 		var a = 0.75+Math.sqrt((this.angle*this.angle))*0.15;
 		//a = 1;
-		var x = (this.x+MapOffX);
+		var x = (this.x+this.app.getCurrent().game.map.x);
 		var y = (this.y+MapOffY);
 		if (y<-40*this.app.getScale())
 			this.del = true;
@@ -178,7 +178,7 @@ var part_boardSnow =
 			//this.x = ((this.x)/2 - (-MapOffX*this.app.getScale()));
 			this.del = false;
 			this.y = this.app.getCurrent().game.map.y;
-			this.x = this.app.getCurrent().game.player.x+this.app.getWidth()/2;
+			this.x = this.app.getCurrent().game.player.x;
 
 			this.create(this.x,this.y,this.app.getCurrent().game.player.angle);
 			

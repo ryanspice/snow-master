@@ -1,10 +1,98 @@
+var getMapPos = function(){
+    
+    return {x:Application.getCurrent().game.map.x,y:Application.getCurrent().game.map.y};
+    
+};
+
+
+function map_tree3(x,y,tree,r)
+{
+	this.layer = 1;
+	this.restore = r;
+	this.type = "Tree";
+	
+	this.tree = tree || true;
+
+	this.init = function(x,y)
+	{
+		this.img = Application.getCurrent().game.bshadow;
+		this.img2 = Application.getCurrent().game.bshadow;
+        
+		this.y = Application.getHeight() + y;
+        this.del = false;
+		this.layer = 1;
+		if ((x)&&(y))
+		{
+		this.x = x;
+		this.y = y;
+		}
+		this.x = -Application.getWidth()*2*Math.random()+Application.getWidth()*2*Math.random();
+		this.collision = 55;
+		this.scale = 1;
+		this.shake = 1;
+        return; 
+	}
+	this.ref = function()
+	{
+		var d = Math.random()*1;
+		if (d>0.5)
+			d = 1.5;
+			else
+			d = 0;
+		//this.x =(App.w*d)-125+(Math.random()*(155));
+		this.y = Player.y+App.h*0.9;
+	}
+	this.draw = function()
+	{
+        
+        //var y = this.x; 
+        
+        var x = this.x + getMapPos().x;
+        
+	//	if (this.y+MapOffY<-200)
+		//	this.del = true;
+		//Application.getCurrent().game.visuals.image(Application.getCurrent().game.bshadow, 	this.shake+MapOffX+this.x,10-(this.scale*Application.getCurrent().game.bshadow.height/2) +this.y+MapOffY,this.scale,1,true);
+	//	Application.getCurrent().game.visuals.image(Application.getCurrent().game.bshadow, 	this.shake+MapOffX+this.x,10-(this.scale*Application.getCurrent().game.bshadow.height/2) +this.y+MapOffY,this.scale,1,true);
+		
+        var y = this.y + -getMapPos().y;
+        
+        Application.getCurrent().game.visuals.image(Application.getCurrent().game.bshadow, 	x ,y,1,1,true);
+
+		if (this.hit)
+			{
+			this.shake+=Math.random()*4 - 2.5;
+			this.shake*=0.9;
+			this.hit = false;
+			}
+        
+        
+        if (this.del){
+            //this.x = getMapPos().x;
+            //this.y = Player.y-getMapPos().y;
+            
+           // this.y +=1000;
+            this.y +=1000;
+            this.del = false;   
+        }
+            //this.x = getMapPos().x;
+        
+        
+        if (this.y-getMapPos().y<10*Application.getScale())
+            this.del = true;
+            
+	}
+	this.init(x,y);
+	mapobjectArray.push(this);
+}		
 
 TimeMultiplier = 1;
 window.onkeypress= function(){Game_.start();}
 treegeneratecount = 0;
 treegenerateClearWave = function()
 {
-mapobjectArray = new Array();
+    mapobjectArray = new Array();
+	for(var i = 15;i>0;--i)
+		new map_tree3(0-(1*i*i)+Math.random()*50-50,55*i,true,true);
 }
 treegenerateWave2 = function()
 {
@@ -344,6 +432,8 @@ Game.prototype = {
 	
 	init:function(){
 	
+        treegenerateClearWave();
+        
 		window.onBlur = function () { Pause = true; }
 		treeinit = false;
 		StartDelay = 100;
@@ -534,6 +624,7 @@ Game.prototype = {
 	
 	draw:function(){
 		
+        
 		var y = new Date().getTime()/10;
 		
 		var width = this.app.getWidth();
@@ -561,7 +652,7 @@ Game.prototype = {
 		//this.visuals.texture(this.main_mountianl,MapOffX*0.9,-MapOffY, 0, height,this.pl,0,true,this.mountian_pos,97,m);
 		//this.visuals.texture(this.main_mountian,MapOffX*0.9,-MapOffY, 0, height,this.pl,0,true,this.mountian_pos2,97,m);
 		
-        var mountain_left_offx = this.map.x*2 - this.main_mountianl.width;
+        var mountain_left_offx = this.map.x*2 - this.main_mountianl.width/2;
         var mountain_right_offx = this.map.x*2;
 		
 		this.visuals.texture(this.main_mountianl,mountain_left_offx,this.map.y*2, 0, height,this.pl,0,true,(0),0,m+1);
@@ -580,6 +671,27 @@ Game.prototype = {
 	//	this.visuals.text(this.map.y.toFixed(2),35,125,"#000000");
 	//	this.visuals.text(m.toFixed(5),35,155,"#000000");
 	//	this.visuals.text(this.mapscale.toFixed(5),35,185,"#000000");
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        for (var i = mapobjectArray.length-1; i>0; --i)
+            mapobjectArray[i].draw();
+        
+        
+        
+        
+        
 		return true;
 	
 
@@ -683,6 +795,9 @@ Game.prototype = {
 				//else
 				//	App.twitter.hidden = true;
 	
+        
+        
+        
 	},
 	
 };

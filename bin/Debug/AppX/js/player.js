@@ -34,8 +34,8 @@ Player.prototype = {
 		
 		this.angleturn = 0;
 		this.angle = 0;
-		this.last_angle = this.angle;
-		this.current_angle = this.angle;
+		this.lasta = this.angle;
+		this.curra = this.angle;
 		
 		//Vars from character select this.app.getCurrent().intro.characterselect
 		
@@ -43,7 +43,7 @@ Player.prototype = {
 		this.accel = 1+0.01;
 		
 		this.speed = 0.1;
-		this.maxspeed = 24;
+		this.maxspeed = 12;
 		this.minspeed = 0.1;
 		
 		this.offY = 0;
@@ -52,9 +52,6 @@ Player.prototype = {
 		MapOffY = 0;
 		MapOffX = 0;
 		this.scale = 0.8;
-                
-        this.offx = 0;
-        this.offy = 0;
         
         
         
@@ -65,23 +62,17 @@ Player.prototype = {
 		//	
 		
 		this.airtrigger = false;
-		this.air_timeout = 25;
+		this.airtimeout = 25;
 		this.air = false;
-		this.air_distance = 10;
+		this.aird = 10;
 		
 		//Player effects
+		
 		this.effects = [];
 		
 		for (var i = 0; i<26;i++)
 			this.effects.push((this.app.create(Object.create(part_boardSnow)).init(100,100,this.angle)));
-        
-        
-        
-		setTimeout   (function(){
-
-		Application.input.init();
-        },100);
-        
+		
 	},
 	
 	draw:function(){
@@ -114,10 +105,10 @@ Player.prototype = {
 		
 		var charCos = Math.cos(this.x/50);
 		
-		charCos = this.angle*1.25;// - this.air_distance/10;
+		charCos = this.angle*1.45;// - this.aird/10;
 		
 		if ((this.angle>0.4)||(this.angle<-0.4))
-			charCos = this.angle*1.45 +(-this.angle* (this.air_distance>5?this.air_distance/5:this.air_distance/10));
+			charCos = this.angle*1.45 +(-this.angle* (this.aird>5?this.aird/5:this.aird/10));
 		
 		var charCosLess = charCos/20;
 		
@@ -131,8 +122,8 @@ Player.prototype = {
         
 		//Xpositions
 		
-		var x = this.x;
-		var map_x = this.app.getCurrent().game.map.x;
+		var x = this.app.getCurrent().game.map.x + this.x;
+		var map_x = -width + this.app.getCurrent().game.map.x;
 		var x_board =  x + map_x;
 		var x_body = a/15+x + map_x;
 		var x_head = a/15+x + map_x;
@@ -146,7 +137,7 @@ Player.prototype = {
 		
 		//Character Scale
 		
-		var scale =this.air_distance/100+ (this.scale * this.app.getCurrent().game.mapscale);
+		var scale =this.aird/100+ (this.scale * this.app.getCurrent().game.mapscale);
 		var img;
 		var w;
 		var h;
@@ -157,7 +148,7 @@ Player.prototype = {
 		w = img.width/2;
 		h = img.height/2;
 		scale+=+0.005*Math.cos(this.y);
-		this.visuals.image_rotate(img,x_board+this.x/100 + this.air_distance*2,y_board,scale*0.9,a*1 ,0.25,-w,-h,false);
+		this.visuals.image_rotate(img,x_board+this.x/100 + this.aird*2,y_board,scale*0.9,a*1 ,0.25,-w,-h,false);
 		
 		//Board Draw
 		
@@ -201,34 +192,10 @@ Player.prototype = {
 	jump:function(){
 		
 		this.air = true;
-		this.air_distance = this.speed*5;
+		this.aird = this.speed*5;
 		
 	},
 	
-    //Controls character while in air
-    
-    update_air:function(){
-        
-		if (this.air_timeout<1)
-		{
-			console.log(this.air_timeout);
-			this.air_timeout=75;
-            
-            //used to test 
-            //,this.air = false,this.air_distance=this.speed*5;
-			//setTimeout(function(){
-			//	
-			//	//You can trigger this from javascript concsole
-			//	Application.getCurrent().game.player.jump();
-			//	
-			//	},2500);
-		}
-        
-		this.air_timeout--;
-		this.air_distance*=0.9;
-        
-    },
-    
 	update:function(){
 		
 		// dimensions
@@ -243,54 +210,56 @@ Player.prototype = {
 		
 		var ylimit = height*0.2;
 		
-		// input, -1 left, 1 right; -1 up, 1 down; 0 null;
-		
-		var xdir =  (this.app.input.getHorizontal().keyboard ||  this.app.input.getHorizontal().touch);
-		var ydir =  (this.app.input.getVertical().keyboard ||  this.app.input.getVertical().touch);
-			
 		var MoveY = 0;
 		var MoveX = 0;
-        
-        //Invert input angle
-        
-        if (this.view==1)
-            xdir=-xdir;
-        
+		
+		// input, -1 left, 1 right; -1 up, 1 down; 0 null;
+		
+		var xdir =  (this.app.input.getHorizontal().keyboard/3.33 ||  this.app.input.getHorizontal().touch/3.33);
+		var ydir =  (this.app.input.getVertical().keyboard ||  this.app.input.getVertical().touch);
+			
 		//First Var Update
 		
-		this.current_angle = ((this.last_angle - this.angle));
+		this.curra = ((this.lasta - this.angle));
 		
-		this.last_angle = this.angle;
+		this.lasta = this.angle;
 		
 		this.angleturn = this.app.input.getHorizontal();
 		
-		this.angle-=(xdir*this.turning/2.33)*this.app.getDelta();
+		this.angle-=xdir*(this.turning)*this.app.getDelta();
 		
-        //if (xdir<0)
-        //    if (this.angle<0)
-        //        this.angle*=0.95    ;
-        //if (xdir>0)
-        //    if (this.angle>0)
-        //        this.angle*=0.95    ;
+
         
 		for (var i = 0; i<26;i++)
 			this.effects[i].update();
 		
 		//Air Update
-            //is in air if timeout>0
-            //	commented out is a timeout to test jump
-            //	
-            //always reduce airtimeout
-            //aird is distance frmo ground
+		//is in air if timeout>0
+		//	commented out is a timeout to test jump
+		//	
+		//always reduce airtimeout
+		//aird is distance frmo ground
 		
-        this.update_air();
-        
-        
-        
+		if (this.airtimeout<1)
+		{
+			console.log(this.airtimeout);
+			this.airtimeout=75;//,this.air = false,this.aird=this.speed*5;
+			//setTimeout(function(){
+			//	
+			//	//You can trigger this from javascript concsole
+			//	Application.getCurrent().game.player.jump();
+			//	
+			//	},2500);
+		}
+		this.airtimeout--;
+		this.aird*=0.9;
+		
 		// Amount of angle adjustment
 		//  a^2/2 = always positive 
 		
-		var adjust = (this.angle*this.angle)*0.05;
+		var adjust;
+		
+		adjust = (this.angle*this.angle)*0.05;
 		
 		//Speed
 		//ifspeed is smaller than 25 (should be maxspeed)
@@ -322,38 +291,47 @@ Player.prototype = {
 		this.speed = this.app.client.Math.Clamp(this.speed, this.minspeed ,this.maxspeed);
 		
 		//Input/Angle
-            //if pressed
-            // and y distance <0
-            //	if y touch vector is less than -150
-            //  sharp turn increase angle
-        
-		//if (this.app.input.getPressed())
+		//if pressed
+		// and y distance <0
+		//	if y touch vector is less than -150
+		//  sharp turn increase angle
+		if (this.app.input.getPressed())
 			if (ydir<0)
 				if (this.app.input.dist.y<-150*this.app.getScale())
 					this.angle-=(this.angle*this.turning)*ydir;
 
 		//Angle Limiter
         
+        
+       // if (this.view==0)
 		this.angle =  this.app.client.Math.Clamp(this.angle,-1.5,1.5) *1.01;
-        
-		//X  - horizontal movement, 
-		var xmov = Math.cos(this.speed/360+60)*-6 + this.accel + this.turning;
-        
-		if ((this.angle<-0.15))
-				MoveX = xmov*(-this.angle*this.turning),    this.offy-=0,this.angle*=1.01;
-			else
-		if ((this.angle>0.15))
-				MoveX = xmov*(-this.angle*this.turning),    this.offy-=0,this.angle*=1.01;
-			else
-				MoveX = ((this.angle)*this.turning),this.angle*=0.9;
 		
-
+      // if (this.view==1)
+      // this.angle =  this.app.client.Math.Clamp(this.angle,-1.5,1.5) *0.99;
+		
         
+		//Y offset unused
+		
+		var offy = 0;
+		
+		offy = 10;
+		
+		//X  - horizontal movement, 
+		
+		if ((this.angle<-0.1))
+				MoveX = 12*(-this.angle*this.turning);
+			else
+		if ((this.angle>0.1))
+				MoveX = 12*(-this.angle*this.turning);
+			else
+				MoveX = ((this.angle)*this.turning);
+		
+		
 		// if angle is too wide, but not that wide, decrease angle, speed up
 	
 		
-		if ((this.angle>-0.75)||(this.angle<-0.75))
-			this.angle*=0.999,MoveX*=3.75;this.offy-=this.speed;//,this.speed*=0.99;
+		if ((this.angle>1)||(this.angle<-1))
+			this.angle*=0.999,MoveX*=1.2;//,this.speed*=0.99;
 		
 		// if angle is too wider, and too wide, decrease angle, slow down, decrease Y, decrease map speed
 		
@@ -361,17 +339,11 @@ Player.prototype = {
 		{
 			
 			this.angle*=0.999;
-			
-            //MoveX*=0.75;
-            MoveX*=1.1;
-			
-            MoveY-=3*(1-this.speed/12);
-			
-            this.speed/=this.accel;
-			
-            this.offy-=this.speed/10;
-			
-            //,this.y-=0.1*this.speed;
+			MoveX*=0.75;
+			MoveY-=3*(1-this.speed/12);
+			this.speed/=this.accel;
+			offy-=MoveY;
+			//,this.y-=0.1*this.speed;
 			
 		}
 		
@@ -424,7 +396,7 @@ Player.prototype = {
 
 
 						//	if (this.app.getCurrent().game.mapscale>0.75)
-						//			this.app.getCurrent().game.mapscale =this.air_distance/20;//,this.speed-=0.0005;
+						//			this.app.getCurrent().game.mapscale =this.aird/20;//,this.speed-=0.0005;
 						//	
 						//	if( (adjust>0.012)||
 						//	   (adjust<-0.012))
@@ -448,28 +420,17 @@ Player.prototype = {
 		
 		//MoveY by speed
 		
-        if (MoveY<0)
-            MoveY*=0.1;
-        
 		MoveY+=this.speed;
 		
 		//this.y +=MoveY;//this.speed * App.delta_speed - (this.drag)* App.delta_speed;
 		//MoveY is supposed to be negative MapOffY and the difference between the two is the camera offset or some sort
-				var offy = 0;
 		
-		offy = 10;
-        this.offy += MoveY*0.75;
-        
-        this.offy*=0.9;
-        
 		this.y = -MapOffY;
 		MapOffY-=MoveY;
 		
-        //offy = MoveY*0.1;
-        
        var offx = -MapOffX*1.5;
-       var offx = -this.x;
-       this.view = 1;
+       var offx = this.x;
+       this.view = 0;
        
      // if (this.view==0)
     //     offx = 0;
@@ -485,28 +446,13 @@ Player.prototype = {
 		
 		
 		//this.x = this.app.getCurrent().game.map.x*0.19;
-		//this.x +=MoveX;
-		this.x =-MapOffX;
+		this.x -= MoveX;
 		
-		MapOffX-=MoveX;//*2.5;
+		MapOffX-=MoveX;
         
         
-        this.offx += MoveX*1.75;
-        
-        this.offx*=0.9;
-        
-        
-        
-        var mapx = MapOffX + (width*0.5+this.offx);//(-MapOffX+(width*0.5) + offx) ;
-        mapx = this.app.client.Math.Clamp(mapx, -width/this.app.getScale() ,width/this.app.getScale());
-        
-		this.app.getCurrent().game.map.x = mapx;
-        
-        
-        
-        
-        
-		this.app.getCurrent().game.map.y = -MapOffY+(height*0.25)+this.offy;
+		this.app.getCurrent().game.map.x = this.x;//(-MapOffX+(width*0.5) + offx) ;
+		this.app.getCurrent().game.map.y = -MapOffY+(height*0.5)+offy;
         
         
 		
@@ -702,10 +648,10 @@ Player.prototype = {
 		var speed = 0;
 		var speedm = 24;
 		
-		//if (this.current_angle<0)
-		//	this.current_angle =-this.current_angle;
+		//if (this.curra<0)
+		//	this.curra =-this.curra;
 //		if (ylimit>100)
-//			this.y-=(((this.current_angle/4)*(speed/speedm)/20))*this.app.getScale()*this.app.getDelta();
+//			this.y-=(((this.curra/4)*(speed/speedm)/20))*this.app.getScale()*this.app.getDelta();
 		
 //		var adjust = (this.angle*this.angle)*0.05;
 //		
@@ -953,9 +899,596 @@ Player.prototype = {
 		
 		return;
 	
-	},
+	}
 	
-	checkTrees:function (x,y)	{
+};
+
+/*
+
+//var _Player = Object.create(null);
+//_Player.prototype = {
+//	id:							{writable:false,configurable:false,enumerable:true},
+//	
+//	x:							{writable:true,configurable:false,enumerable:true},
+//	y:							{writable:true,configurable:false,enumerable:true},
+//	type:						{writable:false,configurable:false,enumerable:true},
+//	
+//	board_speed:				{writable:true,configurable:false,enumerable:false},
+//	board_turning:				{writable:true,configurable:false,enumerable:false},
+//	board_accel:				{writable:true,configurable:false,enumerable:false},
+//	
+//	init:					function()
+//									{
+//									this.retrieveBoardStats();
+//									
+//									
+//									
+//									
+//									
+//									},
+//	retrieveBoardStats:		function()
+//									{
+//										this.board_speed = 		Math.floor(1 + Math.floor((Stats_speedStar[speedStar] * (1.614)		)*100))/100;
+//										this.board_turning = 	Math.floor(1 + Math.floor((Stats_turningStar[turningStar] * (1.614)	)*100))/100;
+//										this.board_accel = 		Math.floor(1 + Math.floor((Stats_accelStar[accelStar] * (1.614)		)*100))/100;
+//										//this.type = =;
+//										return {"t":this.type=Stats_type,"S":this.board_speed,"T":this.board_turning,"A":this.board_accel};
+//									},
+//	setId:					function(id)	
+//									{	return this.id = id;										},
+//	getId:					function()
+//									{	return this.id;												},
+//	get:					function()
+//									{	return {"id":this.id,"t":this.board_speed,"x":this.x,"y":this.y};	}
+//}
+//
+//var _player = Object.create(_Player.prototype,{
+//	id:			{value:0},
+//	x:			{value:App.setWidth/2},
+//	y:			{value:200},
+//	
+//	type:			{value:"type"}
+//	
+//	});
+//	
+//console.log(_player.toString);
+//console.log(_player.setId(1));
+////console.log(_player.retrieveBoardStats());
+//console.log(_player.get());
+*/
+
+/*
+_Player.prototype = {
+	id:			{writable:false,configurable:false,value:0},
+	x:			{writable:true,configurable:false,value:0},
+	y:			{writable:true,configurable:false,value:0},
+	angle:			{writable:true,configurable:false,value:0},
+	
+	
+	
+	air:			{writable:true,configurable:false,enumerable:false,value:0},
+	airtime:			{writable:true,configurable:false,enumerable:false,value:0},
+	
+	
+	
+	update_air: function()
+							{
+								if (this.air)
+								{
+								this.airtime =0;
+								
+								//this.angle=this.airforce/10;
+								//if (this.airforce<0)
+									this.angle*=1.1;
+								//	else
+								//	this.angle*=0.9;
+									
+									if ((this.angle>350)||(this.angle<-350))
+										this.angle = 0,this.airforce=0+Math.random()*35,this.air=false;
+								}
+								return false;
+							},
+	update: function(a)
+							{
+							if (this.airtime>0)
+								this.airtime-=1;
+							if (INPUT_released)
+								this.airforce += INPUT_distX;
+							var h = 0;
+							var AngleMod = 0;
+							if (Pause)
+								return;
+							if (!GameOver)
+							{
+								this.angleturn = App.key* (App.keyPower*0.76);
+								this.angle-=App.key*((this.angleturn)*this.turning/App.scale);
+								if (!INPUT_up)
+									{	
+										if (INPUT.x>INPUT_last.x)
+											this.angle-=(((INPUT.x-INPUT_last.x)/50)*this.turning/App.scale);
+											else
+										if (INPUT.x<INPUT_last.x)                               
+											this.angle-=(((INPUT.x-INPUT_last.x)/50)*this.turning/App.scale);
+									}
+								Angle = this.angle;
+								this.angleturn *= 0.9;
+							}
+							else
+								this.speed*=0.9;
+								
+								
+							if (!this.update_air())
+								{
+							
+									this.angle *=0.9978;
+										
+									if (!this.air)
+										if ((this.angle>100)||(this.angle<-100))
+											this.angle*=0.925;
+											
+									if (this.offY<App.h/3)
+										this.offY+=this.accel;
+										else
+									if (this.offY>App.h/2)
+										this.offY = App.h/2;
+										
+									if (this.speed>5)
+										this.speed*=0.99;
+										else
+									if (this.speed<0)
+										this.speed *= 0.5;
+										else
+									if (this.speed<5)
+										this.speed+=this.accel/100;
+										
+										
+									var MoveX;
+									var MoveY = this.gravity;
+									MoveY += this.accel+this.speed;
+									
+									this.y +=MoveY;
+									this.realY =this.y + MapOffY;
+									
+									if ((this.angle<-45))
+										{
+											MoveX = (Math.sin(this.angle/60)*this.turning)*0.6;
+											this.offY-=this.accel/100*(this.angle/360),this.speed-=0.001*this.turning;
+											if (this.angle<-65)
+											{				
+												if (this.speed>0)
+													this.speed-=0.5;
+												new SnowFuzz(5);
+												MoveX = (Math.sin(this.angle/60)*this.turning)*0.4;
+												if ((this.angle<-180))
+													this.angle = 180; 
+											}
+										}
+										else
+									if ((this.angle>45))
+										{
+											MoveX = (Math.sin(this.angle/60)*this.turning)*0.6;
+											this.offY-=this.accel/100*(-this.angle/360),this.speed-=0.001*this.turning;
+											if (this.angle>65)
+											{
+												if (this.speed>0)
+													this.speed-=0.5;
+												new SnowFuzz(5);
+												MoveX = (Math.sin(this.angle/60)*this.turning)*0.4;
+												if (this.angle>180)
+													this.angle = -180;
+											}
+										}
+										else
+										MoveX = (Math.sin(this.angle/60)*this.turning);
+									if (!this.ice)
+										{
+										if (this.effects.length<100)
+											if (!this.water)
+												new part_boardSnow(this.x+MapOffX,this.y+MapOffY, Angle*1*App.scale);
+										MapOffY = -this.y + this.offY,this.speed+=0.1,this.angle*=1.01,this.x-=2*this.angle/60;
+										}
+										else
+										MapOffY = -this.y + this.offY,this.speed+=0.1,this.ice=false;
+									this.x -=MoveX;
+									MapOffX = ((App.setWidth)/4 - (this.x*0.5));
+									this.checkTrees(this.x,this.y);
+								}
+							},
+	draw: function(){},
+	
+	
+	
+	
+	
+	retrieveBoardStats: 	function () 
+									{
+									this.board_speed = 	0 + Stats_speedStar[speedStar] * (1.614);
+									this.turning = this.board_turning = 1 + Stats_turningStar[turningStar] * (1.614);
+									this.board_accel = 	0 + Stats_accelStar[accelStar] * (1.614);
+									this.type = Stats_type;
+									},
+	setId:					function(id)	
+									{return this.id.value = id;},
+	getId:					function()
+									{return this.id.value;}
+};
+*/
+/*
+
+
+
+var gamestartDelay = 50;
+var trailArray = new Array;
+var trailInActive = new Array;
+var trailPop = 0;
+var createDelay = 2, trailDelay = 0;
+var mapobjectArray = new Array;
+function player()
+{
+	MapSpeedP = 1;
+	GraphicsController.load('imageCharacter','imageCharacter');
+	GraphicsController.load('imageCharacter_legs','imageCharacter_legs');
+	GraphicsController.load('imageCharacter_head','imageCharacter_head');
+	GraphicsController.load('boardOverlay1','overlay/sc');
+	GraphicsController.load('boardOverlay2','overlay/sl');
+	GraphicsController.load('boardOverlay3','overlay/sr');
+	
+	
+	PlayerBoardShadow = GraphicsController.load('bshadow','effects/bshadow');
+	CharacterBoardSelect = 0;
+	//CharacterBoardS = 0;
+	//CharacterBoard = new Array();
+	//CharacterBoard[0] = PlayerBoardSkin0[1];
+	//CharacterBoard[1] = PlayerBoardSkin0[1];
+	//CharacterBoard[2] = PlayerBoardSkin0[2];
+	//CharacterBoard[3] = PlayerBoardSkin0[3];
+	//CharacterBoard[4] = PlayerBoardSkin0[4];
+	//CharacterBoard[5] = PlayerBoardSkin0[5];
+	//CharacterBoard[6] = PlayerBoardSkin0[6];
+	//CharacterBoard[7] = PlayerBoardSkin0[7];
+	//CharacterBoard[8] = PlayerBoardSkin0[8];
+	//CharacterBoard[9] = PlayerBoardSkin0[9];
+	this.setId = function(id) 
+	{
+		if (this.id = id)
+			return true;
+			else
+			return false;
+	}
+	this.retrieveBoardStats = function () {
+	this.board_speed = 		0 + Stats_speedStar[speedStar] * (1.614);
+	this.turning = this.board_turning = 	1 + Stats_turningStar[turningStar] * (1.614);
+	this.board_accel = 		0 + Stats_accelStar[accelStar] * (1.614);
+	this.type = Stats_type;
+	//CharacterBoardS = PlayerBoardSkin0[1]
+	}
+	this.id = 0;
+	this.x = App.setWidth/2;
+	this.y = 0;
+	
+	this.type = "";
+	this.layer = 1;
+	
+	this.hit = 0;
+	
+	this.ice = false;
+	
+	
+	
+	
+	
+	
+	this.kill = false;
+
+
+	this.life = 100;
+	this.boost = 0;
+
+	this.isdead = false;
+
+	this.turning = this.board_turning;
+	this.maxspeed = this.board_speed*10;
+	this.accel = this.board_accel;
+	this.collision = 9999;
+	this.speed = this.board_speed;
+	this.speed = 1;
+	this.speedm = 2;
+	this.speedp = 0;
+	this.angle = 0;
+	this.airb;
+	this.airt;
+	this.airangle = 0;
+	
+	this.lastINPUT_distX;
+	this.horizontalDirection = 1;
+	this.h_dir = 0;
+	this.v_dir = 0;
+	this.e_ = 0;
+	this.set = false;
+	this.settype = 0;
+	this.mapzoom = 1;
+	this.drag = 0.1;
+
+	this.lasta = 0;
+	this.curra = 0;
+	this.effects = new Array;
+	this.imgChar = GraphicsController.getImage('imageCharacter');
+	this.imgHead = GraphicsController.getImage('imageCharacter_head');
+	this.imgOverlay = GraphicsController.getImage('boardOverlay3');
+	this.img = PlayerBoardSkin0[PlayerBoardSelect];
+	this.imge = PlayerCharacterSkin0[PlayerCharSelect];
+	soundtrackSnd[2].loop = true;
+	soundtrackSnd[3].loop = true;
+	this.dx = 0;
+	PlayerBoardOverlay2 = GraphicsController.getImage('boardOverlay2');
+	PlayerBoardOverlay3 = GraphicsController.getImage('boardOverlay3');
+	this.realY = 0;
+	this.offY = 0;
+	this.water = false;
+	this.gravity = 1.3;
+	
+
+			
+	this.reset = function reset()
+	{
+
+	
+		this.retrieveBoardStats();
+		this.set = false;
+		this.settype = 0;
+		this.setscore = 0;
+		this.mapzoom = 1;
+		this.kill = false;
+		this.x = App.setWidth/2;
+		this.y = 200;
+		
+		this.hit = 0;
+		this.life = 100;
+		this.boost = 0;
+		this.ice = false;
+		this.water = false;
+		this.isdead = false;
+	
+		this.maxspeed = this.board_speed+10;
+		
+		this.speed = 1;
+		this.speedm = 55;
+		this.accel = 1;
+		
+		
+		
+		this.air = false;
+		this.airb = false;
+		this.airt = 100;
+		this.angle = 0;
+		this.angleturn = 0;
+		this.airangle = 0;
+		this.h_dir = 0;
+		this.v_dir = 0;
+		this.e_ = 0;
+		this.map_off_y = 0;
+		
+		this.fall = false;
+		if (PlayerCharSelect==0)
+			this.type = "Ski";
+			else
+			this.type = "Board";
+		MapSpeedP = 1;
+		
+	this.airtime = 0;
+	}
+	
+	
+	
+	
+	this.update = function(a)
+	{
+	if (this.airtime>0)
+		this.airtime-=1;
+	if (INPUT_released)
+		this.airforce += INPUT_distX;
+	var h = 0;
+	var AngleMod = 0;
+	if (Pause)
+		return;
+
+	
+	if (!GameOver)
+	{
+		this.angleturn = App.key* (App.keyPower*0.8);
+		this.angle-=App.key*((this.angleturn)*this.turning/App.scale)*App.delta_speed;
+		if (!INPUT_up)
+			{	
+				if (INPUT.x>INPUT_last.x)
+					this.angle-=(((INPUT.x-INPUT_last.x)/50)*this.turning/App.scale)*App.delta_speed;
+					else
+				if (INPUT.x<INPUT_last.x)                               
+					this.angle-=(((INPUT.x-INPUT_last.x)/50)*this.turning/App.scale)*App.delta_speed;
+			}
+		Angle = this.angle;
+		this.angleturn *= 0.9;
+	}
+	else
+	{
+		this.speed*=0.9;
+	}
+		
+		
+	if (this.air)
+		{
+		
+		this.airtime =0;
+		
+//		this.angle=this.airforce/10;
+		//if (this.airforce<0)
+			this.angle*=1.1;
+		//	else
+		//	this.angle*=0.9;
+			
+			if ((this.angle>350)||(this.angle<-350))
+				this.angle = 0,this.airforce=0+Math.random()*35,this.air=false;
+				
+		}
+		else
+		{
+	
+			this.angle *=0.9978;
+				
+			if (!this.air)
+				if ((this.angle>100)||(this.angle<-100))
+					this.angle*=0.925;
+					
+			if (this.offY<App.h/3)
+				this.offY+=this.accel;
+				else
+			if (this.offY>App.h/2)
+				this.offY = App.h/2;
+				
+			if (this.speed>5)
+				this.speed*=0.99;
+				else
+			if (this.speed<0)
+				this.speed *= 0.5;
+				else
+			if (this.speed<5)
+				this.speed+=this.accel/100;
+				
+				
+			var MoveX;
+			var MoveY = this.gravity;
+			MoveY += this.accel+this.speed;
+			
+			this.y +=MoveY;
+			this.realY =this.y + MapOffY;
+			
+			if ((this.angle<-45))
+				{
+					MoveX = (Math.sin(this.angle/60)*this.turning)*0.6;
+					this.offY-=this.accel/100*(this.angle/360),this.speed-=0.001*this.turning;
+					if (this.angle<-65)
+					{				
+						if (this.speed>0)
+							this.speed-=0.5;
+						new SnowFuzz(5);
+						MoveX = (Math.sin(this.angle/60)*this.turning)*0.4;
+						if ((this.angle<-180))
+							this.angle = 180; 
+					}
+				}
+				else
+			if ((this.angle>45))
+				{
+					MoveX = (Math.sin(this.angle/60)*this.turning)*0.6;
+					this.offY-=this.accel/100*(-this.angle/360),this.speed-=0.001*this.turning;
+					if (this.angle>65)
+					{
+						if (this.speed>0)
+							this.speed-=0.5;
+						new SnowFuzz(5);
+						MoveX = (Math.sin(this.angle/60)*this.turning)*0.4;
+						if (this.angle>180)
+							this.angle = -180;
+					}
+				}
+				else
+				MoveX = (Math.sin(this.angle/60)*this.turning);
+			if (!this.ice)
+				{
+				if (this.effects.length<100)
+					if (!this.water)
+						new part_boardSnow(this.x+MapOffX,this.y+MapOffY, Angle*1*App.scale);
+				MapOffY = -this.y + this.offY,this.speed+=0.1,this.angle*=1.01,this.x-=2*this.angle/60;
+				}
+				else
+				MapOffY = -this.y + this.offY,this.speed+=0.1,this.ice=false;
+			this.x -=MoveX;
+			MapOffX = ((App.setWidth)/4 - (this.x*0.5));
+			this.checkTrees(this.x,this.y);
+		}
+	}
+
+	this.draw = function draw()
+	{           
+		for(var i = this.effects.length-1; i>0; --i)
+			{
+			if (App.particleLimit>0)
+				this.effects[i].draw();
+				else
+				break;
+			if (this.effects[i].del)
+				{
+				if (!this.ice)
+					{
+					this.effects[i].del = false;
+					try{
+					this.effects[i].create(this.x,this.y+MapOffY,this.angle);}catch(e){this.effects.splice(i,1);}
+					}
+				continue;
+				}
+			}	
+			
+		if (!this.air)
+				App.visuals.image_rotate2(PlayerBoardShadow,this.airtime+(this.x+MapOffX)+Angle*0.004,-3-this.airtime/2+(this.y+MapOffY)-Angle*0.004,0.8-Angle*0.002,-15+Angle*0.4,-this.w*1.5,-this.h*2,0.5);
+			else
+				App.visuals.image_rotate2(PlayerBoardShadow,this.airtime+(this.x+MapOffX)+Angle*0.008,-3-this.airtime/2+(this.y+MapOffY)-Angle*0.004,0.5-Angle*0.002,+Angle*0.4,-this.w*1.5,-this.h*2,0.5);
+		var scale = 0.8;
+		this.w = this.img.width/2;
+		this.h = this.img.height/2;
+		switch(Stats_type)
+		{
+			case "Board":
+			
+				var bh = 0;
+				if (BIGHEAD)
+					var bh = 1.5;
+					
+				App.visuals.image_rotate2(this.img,this.x+MapOffX,this.y+MapOffY,scale,Angle*1.1,-this.w,-this.h);
+				if (Angle<0)
+					App.visuals.image_rotate2(PlayerBoardOverlay2,this.x+MapOffX,this.y+MapOffY,scale*1,Angle*1,-this.w,-this.h ,s);
+					else
+					App.visuals.image_rotate2(this.imgOverlay,this.x+MapOffX,this.y+MapOffY,scale*1,Angle*1,-this.w,-this.h ,s);
+					
+						this.w = this.imge.width/2;
+				this.h = this.imge.height/2;
+				if (PlayerCharSelect==2)
+					{
+					App.visuals.image_rotate2(this.imgChar,this.x+MapOffX,this.y+MapOffY,scale+0.2,Angle*0.95,-this.w,-this.h*1.2);
+					App.visuals.image_rotate2(this.imgHead,this.x+MapOffX,this.y+MapOffY,scale+0.2,Angle*0.5,-this.w,-this.h*1.2);
+					}
+					else
+					{
+					if (!GameOver)
+						App.visuals.image_rotate2(PlayerCharacterSkin0[PlayerCharSelect] ,this.x+MapOffX,this.y+MapOffY,scale*1.1+bh,Angle*0.9,-this.w,-this.h*1.2);
+						else
+						App.visuals.image_rotate2(PlayerCharacterSkin0[PlayerCharSelect] ,this.x+MapOffX,this.y+MapOffY*1.1,scale*1.1+bh,Angle*0.9,-this.w,-this.h*1.2);
+					}
+			break;
+			case "Ski":
+				var aa = Angle;
+				if (aa>0)
+				{
+					App.visuals.image_rotate2(SkiPole, -10+this.x+MapOffX,this.realY ,1,aa*0.9,-SkiPole.width,0,1);	
+					if (aa>75)
+						aa = 75;
+					App.visuals.image_rotate2(SkiPole, 10+this.x+MapOffX,this.realY ,1,aa*0.85,-SkiPole.width, 0,1);	
+					aa = Angle;
+				}
+				else
+				{
+					App.visuals.image_rotate2(SkiPole, 10+this.x+MapOffX,this.realY ,1,aa*0.9,-SkiPole.width ,0,1);	
+					if (aa<-75)
+						aa = -75;
+					App.visuals.image_rotate2(SkiPole, -10+this.x,this.realY ,1,aa*0.85,-SkiPole.width,0,1);	
+					aa = Angle;
+				}
+				App.visuals.image_rotate2(PlayerSki[2] ,this.x+MapOffX,this.realY,     scale+0.4,Angle*0.8,-SkiPole.width,-PlayerCharacterSkin0[1].height/4,1);
+				App.visuals.image_rotate2(PlayerSki[1] ,this.x+MapOffX,this.realY,     scale+0.4,Angle*0.7,-SkiPole.width,-PlayerCharacterSkin0[1].height/4,1);
+				App.visuals.image_rotate2(PlayerSki[0] ,this.x+MapOffX,this.realY,     scale+0.4,Angle*0.6,-SkiPole.width,-PlayerCharacterSkin0[1].height/4,1);
+			break;
+		}
+	}
+	this.checkTrees = function (x,y)	
+	{
 		var chk;
 		var chkL = mapobjectArray.length;
 		var hit = false;
@@ -1185,4 +1718,10 @@ Player.prototype = {
 		}
 		//delete chk;
 	}
-};
+	this.reset();
+}
+
+*/
+
+
+
